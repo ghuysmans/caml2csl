@@ -1,0 +1,11 @@
+
+(* stdlib: random *)
+
+MODULE random IS Random {
+VALUE{
+init            =
+full_init       =
+int             =
+float           =
+}
+}

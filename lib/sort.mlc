@@ -1,0 +1,9 @@
+
+(* stdlib: sort *)
+
+MODULE sort IS Sort {
+VALUE{
+sort	.list
+merge	=
+}
+}

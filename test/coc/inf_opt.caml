@@ -1,0 +1,203 @@
+(*+all+*)
+type 'A sumor = inleft of 'A
+              | inright
+;;
+
+let acc_rec f =
+  let rec acc_rec x =
+    f x (fun y -> acc_rec y)
+  in acc_rec
+;;
+
+let lt_eq_lt_dec n =
+  let rec f = function
+    0 ->
+      (fun m -> let rec f = function
+                  0 -> inleft false
+                | _ -> inleft true
+                in f m)
+  | n0 ->
+      (fun m -> let rec f0 = function
+                  0 -> inright
+                | n1 -> (f (n0-1) (n1-1))
+                in f0 m)
+  in f n
+;;
+
+let le_lt_dec n m=(n<=m)
+;;
+
+
+type sort = kind
+          | prop
+;;
+
+type term = Srt of sort
+          | Ref of int
+          | Abs of term * term
+          | App of term * term
+          | Prod of term * term
+;;
+
+
+let rec lift_rec n n' k =
+  match n' with
+    Srt x -> Srt x
+  | Ref i ->if (le_lt_dec k i) then Ref (n+i)
+                               else Ref i
+  | Abs(t,m) -> Abs((lift_rec n t k),(lift_rec n m (succ k)))
+  | App(m,n'0) -> App((lift_rec n m k),(lift_rec n n'0 k))
+  | Prod(m,n'0) -> Prod((lift_rec n m k),(lift_rec n n'0 (succ k)))
+
+;;
+
+let lift n n' =
+  lift_rec n n' 0
+;;
+
+let rec subst_rec n' m k =
+  match m with
+    Srt x -> Srt x
+  | Ref i ->
+      (match lt_eq_lt_dec k i with
+         inleft c -> if c then Ref (match i with
+                                 0 -> 0
+                               | u -> (u-1))
+                          else lift k n'
+       | inright -> Ref i)
+  | Abs(t',t) -> Abs((subst_rec n' t' k),(subst_rec n' t (succ k)))
+  | App(u,v) -> App((subst_rec n' u k),(subst_rec n' v k))
+  | Prod(t',u) -> Prod((subst_rec n' t' k),(subst_rec n' u (succ k)))
+
+;;
+
+let subst n m =
+  subst_rec n m 0
+;;
+
+(*+cons_norm+*)
+let cons_norm t =
+  acc_rec (fun a norm -> match a with
+                           Srt s0 -> Srt s0
+                         | Ref n0 -> Ref n0
+                         | Abs(t'0,t1) -> Abs((norm t'0),(norm t1))
+                         | App(u0,v0) ->
+                             (match norm u0 with
+                                Srt s -> App((Srt s),(norm v0))
+                              | Ref n -> App((Ref n),(norm v0))
+                              | Abs(a0,b) -> norm (subst (norm v0) b)
+                              | App(a0,b) -> App((App(a0,b)),(norm v0))
+                              | Prod(a0,b) ->
+                                  App((Prod(a0,b)),(norm v0)))
+                         | Prod(t'0,u0) -> Prod((norm t'0),(norm u0)))
+    t
+;;
+(*+cons_norm+*)
+
+(*+cons_conv+*)
+let cons_conv u v =((cons_norm u)=(cons_norm v))
+;;
+(*+cons_conv+*)
+
+
+type env == term list;;
+
+
+
+let cons_item e n =
+  let rec f = function
+    [] -> (fun p -> inright)
+  | y::l0 ->
+      (fun n0 -> match n0 with
+                   0 -> inleft y
+                 | k ->
+                     (match f l0 (pred k) with
+                        inleft u -> inleft u
+                      | inright -> inright))
+  in f e n
+;;
+
+(*+cons_korp+*)
+let cons_korp t = ((Srt kind)=t) or (cons_conv (Srt prop) t);;
+(*+cons_korp+*)
+
+(*+cons_conv_prod+*)
+let cons_conv_prod t =
+  match cons_norm t with
+    Srt s0 -> inright
+  | Ref n -> inright
+  | Abs(t0,t1) -> inright
+  | App(t0,t1) -> inright
+  | Prod(t0,t1) -> inleft (t0,t1)
+;;
+(*+cons_conv_prod+*)
+
+(*+infer+*)
+let infer e t =
+  let rec fr = function
+    Srt s ->
+      (fun f -> match s with
+                  kind -> inright
+                | prop -> inleft (Srt kind))
+  | Ref n ->
+      (fun e0 -> match cons_item e0 n with
+                   inleft t' -> inleft (lift (succ n) t')
+                 | inright -> inright)
+  | Abs(t1,t2) ->
+      (fun e0 -> match fr t1 e0 with
+                   inleft t' ->if cons_korp t'
+                          then (match fr t2 (t1::e0) with
+                             inleft b ->
+                               if (Srt kind)=b then inright
+                                               else inleft (Prod(t1,b))
+                           | inright -> inright)
+                          else inright
+                 | inright -> inright)
+  | App(t1,t2) ->
+      (fun e0 -> match fr t1 e0 with
+                   inleft t' ->
+                     (match cons_conv_prod t' with
+                        inleft (v,ur) ->
+                         (match fr t2 e0 with
+                                  inleft b ->if cons_conv v b
+                                               then inleft (subst t2 ur)
+                                               else inright
+                                | inright -> inright)
+                      | inright -> inright)
+                 | inright -> inright)
+  | Prod(t1,t2) ->
+      (fun e0 -> match fr t1 e0 with
+                   inleft t' ->if cons_korp t'
+                      then (match fr t2 (t1::e0) with
+                             inleft b ->if (Srt kind)=b
+                                          then inleft (Srt kind)
+                                          else if cons_conv (Srt prop) b
+                                              then inleft (Srt prop)
+                                              else inright
+                           | inright -> inright)
+                      else inright
+                 | inright -> inright)
+  in fr t e
+;;
+(*+infer+*)
+
+(*+check_typ+*)
+let check_typ e t t' =
+  match infer e t with
+    inleft t'' -> if (Srt kind)=t''
+         then (Srt kind)=t'
+         else (match infer e t' with
+              inleft s -> cons_conv t' t''
+            | inright -> false)
+  | inright -> false
+;;
+(*+check_typ+*)
+
+(*+add_typ+*)
+let add_typ e t =
+  match infer e t with
+    inleft t' ->  cons_korp t'
+  | inright -> false
+;;
+(*+add_typ+*)
+(*+all+*)

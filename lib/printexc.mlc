@@ -1,0 +1,8 @@
+
+(* stdlib: printexc *)
+
+MODULE printexc IS Printexc {
+VALUE{
+f	.catch
+}
+}

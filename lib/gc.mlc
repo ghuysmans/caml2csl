@@ -1,0 +1,39 @@
+
+(* stdlib: gc *)
+
+MODULE gc OPEN Gc {
+TYPE{
+stat	=
+control	=
+}
+
+VALUE{
+stat	=
+print_stat	=
+get	=
+set	=
+minor	=
+major	=
+full_major	=
+}
+
+LABEL{
+minor_words	=
+promoted_words	=
+major_words	=
+minor_collections	=
+major_collections	=
+heap_words	=
+heap_chunks	=
+live_words	=
+live_blocks	=
+free_words	=
+free_blocks	=
+largest_free	=
+fragments	=
+minor_heap_size	=
+major_heap_increment	=
+space_overhead	=
+verbose		=
+}
+}

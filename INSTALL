@@ -1,0 +1,90 @@
+
+Requirements:
+=============
+
+The following commands must be installed on your workstation:
+ - Caml-Light, version 0.7
+ - Objective-Caml, version 1.03 at least
+ - the C preprocessor cpp
+ 
+
+
+Installation procedure:
+=======================
+
+1) Edit file config to set the following variables to the right paths:
+
+      - CPP is the command to invoke the C preprocessor (check if the path
+        is correct),
+
+      - MANDIR is the directory where the manpages will be installed (in
+	fact, the manpage will be copied in MANDIR/man1)
+
+      - the script of the commands caml2csl and renamer will be installed in
+        BINDIR (will be created if it does not exist),
+
+      - the conversion files will be stored in INSTALLDIR (will be created if
+        it does not exist),
+
+      - LIBNAME is the name of the core conversion file. Change it only if
+        that file already exists.
+
+
+2) From caml2cslV2.0/ directory, do:
+
+        make world
+
+   A message tells you when the installation is done. This means that the
+   commands caml2csl, renamer and the conversion files are installed in
+   their directories.
+
+
+3) You can install the commands and the manpage with:
+
+        make install
+
+        make install-manpage
+
+
+4) You can test caml2csl on 2 examples: go in test/coc/ or test/toto, and type:
+
+  make
+
+   This should start the translation and the compilation of the examples.
+
+   coc is a small program written in Caml-Light that will be translated
+   without human help.
+
+   toto.caml is a kind of bench to show what caml2csl can translate and what
+   it cannot. The translation of toto.caml will yield a few warnings, and will
+   fail to compile.
+
+
+
+If anything goes wrong:
+=======================
+
+1) Make sure that camlc, camllibr, camlyacc, camllex, cslc and cpp are
+   properly installed, using the command which:
+
+  which camlc
+  ...
+  which cpp 
+
+If one of these commands fails, you must install the corresponding command.
+
+
+2) You must have the rights to create or write in the directories indicated
+   by the variables BINDIR and INSTALLDIR of config.
+
+
+If compilation failed, you can restart from the beginning by doing:
+
+  make clean
+
+to remove all the files generated during compilation, and then
+
+  make world
+
+to restart compilation.
+

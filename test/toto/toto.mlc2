@@ -1,0 +1,12 @@
+
+MODULE toto {
+TYPE{
+ZZZ     .zzz
+}
+CONSTR{
+zzz     .ZZZ    0
+}
+VALUE{
+idz     .id
+}
+}

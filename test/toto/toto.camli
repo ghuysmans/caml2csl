@@ -1,0 +1,8 @@
+
+exception Exc of int -> int
+      and Exc2
+;;
+
+type ZZZ= zzz of int;;
+
+value idz: ZZZ -> ZZZ;;

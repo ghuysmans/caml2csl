@@ -1,0 +1,17 @@
+
+(* stdlib: printf *)
+
+MODULE printf IS Printf {
+TYPE{
+format	"__".format
+}
+
+VALUE{
+fprintf	=
+printf	=
+eprintf	=
+fprint	Pervasives.output_string
+print	Pervasives.print_string
+eprint	Pervasives.prerr_string
+}
+}

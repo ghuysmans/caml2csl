@@ -1,0 +1,123 @@
+        
+
+(* Unix library *)
+
+MODULE unix OPEN Unix {
+TYPE{
+error           =
+file_descr      =
+open_flag       =
+seek_command    =
+access_permission       =
+process_times   =
+passwd_entry    =
+group_entry     =
+}
+
+VALUE{
+stdin           .stdin
+stdout          .stdout
+stderr          .stderr
+
+environment     =
+execv           =
+execve          =
+execvp          =
+fork            =
+wait            =
+(*waitopt*)
+waitpid         =
+system          =
+getpid          =
+getppid         =
+nice            =
+open            .openfile
+close           =
+read            =
+write           =
+in_channel_of_descr     =
+out_channel_of_descr    =
+descr_of_in_channel     =
+descr_of_out_channel    =
+
+stat            =
+
+truncate        =
+unlink          =
+rename          =
+link            =
+
+chmod           =
+fchmod          =
+umask           =
+access          =
+
+mkdir           =
+rmdir           =
+chdir           =
+getcwd          =
+opendir         =
+readdir         =
+rewinddir       =
+closedir        =
+
+pipe            =
+dup             =
+dup2            =
+
+open_process_in         =
+open_process_out        =
+open_process            =
+close_process_in        =
+close_process_out       =
+close_process           =
+
+time            =
+times           =
+
+getuid          =
+geteuid         =
+setuid          =
+getgid          =
+getegid         =
+setgid          =
+getgroups       =
+
+getlogin        =
+getpwuid        =
+getpwnam        =
+
+}
+
+CONSTR{
+Unix_error      =	0
+R_OK            =	0
+W_OK            =	0
+X_OK            =	0
+F_OK            =	0
+SEEK_SET        =	0
+SEEK_CUR        =	0
+SEEK_END        =	0
+
+S_BLK           =       0
+S_REG           =       0
+S_DIR           =       0
+}
+
+LABEL{
+
+st_kind         =
+
+tms_utime       =
+tms_stime       =
+tms_cutime      =
+tms_cstime     =
+pw_name         =
+pw_passwd       =
+pw_uid          =
+pw_gid          =
+pw_gecos        =
+pw_dir          =
+pw_shell        =
+}
+}

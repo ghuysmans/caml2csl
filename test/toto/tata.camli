@@ -1,0 +1,4 @@
+
+type ZZZ= zzz of int;;
+
+value idz: ZZZ -> ZZZ;;

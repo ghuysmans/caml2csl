@@ -1,0 +1,14 @@
+
+(* stdlib: filename *)
+
+MODULE filename OPEN Filename {
+VALUE{
+current_dir_name	=
+concat			=
+is_absolute		=
+check_suffix		=
+chop_suffix		=
+basename		=
+dirname			=
+}
+}

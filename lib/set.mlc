@@ -1,0 +1,25 @@
+
+(* stdlib: set *)
+
+MODULE set IS Caml_set {
+TYPE{
+t       =
+}
+
+VALUE{
+empty   =
+is_empty        =
+mem     =
+add     =
+remove  =
+union   =
+inter   =
+diff    =
+equal   =
+compare =
+elements        =
+iter    =
+fold    =
+choose  =
+}
+}

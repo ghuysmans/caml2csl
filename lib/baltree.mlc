@@ -1,0 +1,28 @@
+
+(* stdlib: baltree *)
+
+MODULE baltree OPEN Baltree {
+TYPE{
+t               =
+contents        =
+}
+
+VALUE{
+add     =
+contains        =
+find    =
+remove  =
+modify  =
+split   =
+compare =
+join    =
+concat  =
+}
+
+CONSTR{
+Empty   =       0
+Node    =       4
+Nothing =       0
+Something       =       1
+}
+}

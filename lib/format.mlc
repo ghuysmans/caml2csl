@@ -1,0 +1,41 @@
+
+(* stdlib: format *)
+
+MODULE format OPEN Format {
+VALUE{
+open_vbox	=
+open_hbox	=
+open_hvbox	=
+open_hovbox	=
+close_box	=
+print_string	=
+print_as	=
+print_int	=
+print_float	=
+print_char	=
+print_bool	=
+print_break	"Caml__csl".print_break
+print_cut	=
+print_space	=
+force_newline	=
+print_flush	=
+print_newline	=
+print_if_newline	=
+open_tbox	=
+close_tbox	=
+print_tbreak	=
+set_tab		=
+print_tab	=
+set_margin	=
+get_margin	=
+set_max_indent	=
+get_max_indent	=
+set_max_boxes	=
+get_max_boxes	=
+set_ellipsis_text	=
+get_ellipsis_text	=
+set_formatter_output_channel	.set_formatter_out_channel
+set_formatter_output_functions	=
+get_formatter_output_functions	=
+}
+}

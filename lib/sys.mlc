@@ -1,0 +1,57 @@
+
+(* stdlib: sys *)
+
+MODULE sys IS Sys {
+
+TYPE{
+open_flag       =
+file_perm       "Caml__csl".file_perm
+}
+
+VALUE{
+command_line    .argv
+interactive     "Caml__csl".interactive
+s_irusr		"Caml__csl".s_irusr (* 256 *)
+s_iwusr		"Caml__csl".s_iwusr (* 128 *)
+s_ixusr		"Caml__csl".s_ixusr
+s_irgrp		"Caml__csl".s_irgrp
+s_iwgrp		"Caml__csl".s_iwgrp
+s_ixgrp		"Caml__csl".s_ixgrp
+s_iroth		"Caml__csl".s_iroth
+s_iwoth		"Caml__csl".s_iwoth
+s_ixoth		"Caml__csl".s_ixoth (* 1 *)
+s_isuid		"Caml__csl".s_isuid (* 2048 *)
+s_isgid		"Caml__csl".s_isgid (* 1024 *)
+s_irall		"Caml__csl".s_irall (* 292 *)
+s_iwall		"Caml__csl".s_iwall (* 146 *)
+s_ixall		"Caml__csl".s_ixall (* 73 *)
+
+exit            Pervasives.exit
+open            "Caml__csl".sys_open
+close           "Caml__csl".sys_close
+remove          =
+getenv          =
+rename          =
+chdir           =
+system_command  .command
+catch_break     =
+
+max_vect_length	        ."?sys__max_vect_length"
+max_string_length	."?sys__max_string_length"
+}
+
+CONSTR{
+O_RDONLY        Pervasives.Open_rdonly	0
+O_WRONLY        Pervasives.Open_wronly	0
+O_RDWR		."?sys__O_RDWR"		0
+O_APPEND        Pervasives.Open_append	0
+O_CREAT         Pervasives.Open_creat	0
+O_TRUNC         Pervasives.Open_trunc	0
+O_EXCL          Pervasives.Open_excl	0
+O_BINARY        Pervasives.Open_binary	0
+O_TEXT          Pervasives.Open_text	0
+Break           =			0
+Sys_error	"__".Sys_error		1
+}
+}
+

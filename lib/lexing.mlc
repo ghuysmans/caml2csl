@@ -1,0 +1,31 @@
+
+(* stdlib: lexing *)
+
+MODULE lexing OPEN Lexing {
+TYPE{
+lexbuf	=
+}
+
+VALUE{
+create_lexer_channel	.from_channel
+create_lexer_string	.from_string
+create_lexer		.from_function
+get_lexeme		.lexeme
+get_lexeme_char		.lexeme_char
+get_lexeme_start	.lexeme_start
+get_lexeme_end		.lexeme_end
+start_lexing		=
+get_next_char		=
+backtrack		=
+}
+
+LABEL{
+refill_buff	=
+lex_buffer	=
+lex_abs_pos	=
+lex_start_pos	=
+lex_curr_pos	=
+lex_last_pos	=
+lex_last_action	=
+}
+}

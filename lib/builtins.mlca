@@ -1,0 +1,691 @@
+
+
+(* Identificateurs a ne jamais qualifier et mots-cles: *)
+
+MODULE "__" IS "__" {
+TYPE{
+""	.option
+
+""	.and
+""	.as
+""	.begin
+""	.do
+""	.done
+""	.downto
+""	.else
+""	.end
+""	.exception
+""	.external
+""	.false
+""	.for
+""	.fun
+""	.function
+""	.functor
+""	.if
+""	.in
+""	.include
+""	.let
+""	.match
+""	.module
+""	.mutable
+""	.of
+""	.open
+""	.parser
+""	.rec
+""	.sig
+""	.struct
+""	.then
+""	.to
+""	.true
+""	.try
+""	.type
+""	.val
+""	.when
+""	.while
+""	.with
+(* ocaml new keywords: *)
+""      .asr
+""      .class
+""      .closed
+""      .constraint
+""      .inherit
+""      .land
+""      .lor
+""      .lsl
+""      .lsr
+""      .lxor
+""      .method
+""      .mod
+""      .new
+""      .or
+""      .private
+""      .virtual
+}
+
+VALUE{
+""	.and
+""	.as
+""	.begin
+""	.do
+""	.done
+""	.downto
+""	.else
+""	.end
+""	.exception
+""	.external
+""	.false
+""	.for
+""	.fun
+""	.function
+""	.functor
+""	.if
+""	.in
+""	.include
+""	.let
+""	.match
+""	.module
+""	.mutable
+""	.of
+""	.open
+""	.parser
+""	.rec
+""	.sig
+""	.struct
+""	.then
+""	.to
+""	.true
+""	.try
+""	.type
+""	.val
+""	.when
+""	.while
+""	.with
+(* ocaml new keywords: *)
+""      .asr
+""      .class
+""      .closed
+""      .constraint
+""      .inherit
+""      .land
+""      .lor
+""      .lsl
+""      .lsr
+""      .lxor
+""      .method
+""      .mod
+""      .new
+""      .or
+""      .private
+""      .virtual
+}
+
+CONSTR{
+""	.Some	1
+""	.None	0
+
+""	.Match_failure		3
+""	.Invalid_argument	1
+""	.Failure		1
+""	.Not_found		0
+""	.Out_of_memory		0
+""	.Sys_error		1
+""	.End_of_file		0
+""	.Division_by_zero	0
+}
+
+LABEL{
+""	.and
+""	.as
+""	.begin
+""	.do
+""	.done
+""	.downto
+""	.else
+""	.end
+""	.exception
+""	.external
+""	.false
+""	.for
+""	.fun
+""	.function
+""	.functor
+""	.if
+""	.in
+""	.include
+""	.let
+""	.match
+""	.module
+""	.mutable
+""	.of
+""	.open
+""	.parser
+""	.rec
+""	.sig
+""	.struct
+""	.then
+""	.to
+""	.true
+""	.try
+""	.type
+""	.val
+""	.when
+""	.while
+""	.with
+(* ocaml new keywords: *)
+""      .asr
+""      .class
+""      .closed
+""      .constraint
+""      .inherit
+""      .land
+""      .lor
+""      .lsl
+""      .lsr
+""      .lxor
+""      .method
+""      .mod
+""      .new
+""      .or
+""      .private
+""      .virtual
+}
+}
+
+
+
+
+
+(* Core library *)
+
+
+MODULE bool IS Pervasives {
+VALUE{
+not             =
+string_of_bool  =
+}
+}
+
+
+
+
+
+MODULE builtin IS "__" {
+TYPE{
+int	=
+char	=
+string	=
+float	=
+bool	=
+unit	=
+exn	=
+vect	.array
+list	=
+}
+
+VALUE{
+".("            =
+".["            =
+".()<-"         =
+".[]<-"         =
+}
+
+
+CONSTR{
+"()"            =	0
+"[]"            =	0
+"::"            =	2
+true            =	0
+false           =	0
+Match_failure	=	3
+}
+}
+
+
+
+
+
+MODULE char IS Char {
+VALUE{
+int_of_char     .code
+char_of_int     .chr
+char_for_read   .escaped
+is_printable	."?is_printable"
+}
+}
+
+
+
+
+MODULE eq IS Pervasives {
+VALUE{
+"="               =
+"<>"              =
+"<"               =
+"<="              =
+">"               =
+">="              =
+compare           =
+min               =
+max               =
+"=="              =
+"!="              =
+}
+}
+
+
+
+
+
+MODULE exc IS Pervasives {
+VALUE{
+raise           =
+failwith        =
+invalid_arg     =
+}
+
+CONSTR{
+Out_of_memory		"__".Out_of_memory	0
+Invalid_argument	"__".Invalid_argument	1
+Failure			"__".Failure		1
+Not_found		"__".Not_found		0
+Exit			=			0
+}
+}
+
+
+
+
+
+
+
+
+
+
+MODULE float IS Pervasives {
+VALUE{
+int_of_float    .truncate
+float_of_int    .float
+minus_float     ."(~-.)"
+"+."            =
+"-."            =
+"*."            =
+"/."            =
+"**"            =
+exp             =
+log             =
+sqrt            =
+sin             =
+cos             =
+tan             =
+asin            =
+acos            =
+atan            =
+atan2           =
+abs_float       =
+string_of_float =
+float_of_string =
+format_float	."?format_float"
+
+(* DANGER *)
+minus           ."(~-.)"
+"+"             ."+."
+"-"             ."-."
+"*"             ."*."
+"/"             ."/."
+
+add_float       ."(+.)"
+sub_float       ."(-.)"
+mult_float      ."(*.)"
+div_float       ."(/.)"
+"**."           ."**"
+power           ."(**)"
+eq_float        ."(=)"
+"=."            ."="
+neq_float       ."(<>)"
+"<>."           ."<>"
+"<."            ."<"
+lt_float        ."<"
+">."            .">"
+gt_float        .">"
+"<=."           ."<="
+le_float        ."<="
+">=."           .">="
+ge_float        .">="
+}
+}
+
+
+
+
+MODULE int  IS Pervasives {
+
+VALUE{
+minus           ."(~-)"
+minus_int       ."(~-)"
+succ            =
+pred            =
+"+"             =
+add_int         ."(+)"
+"-"             =
+sub_int         ."(-)"
+"*"             =
+mult_int        ."(*)"
+"/"             =
+div_int         ."(/)"
+quo             ."/"
+mod             =
+eq_int          ."(=)"
+neq_int         ."(<>)"
+lt_int          ."(<)"
+gt_int          ."(>)"
+le_int          ."(<=)"
+ge_int          ."(>=)"
+abs             =
+land            =
+lor             =
+lxor            =
+lnot            =
+lsl             =
+lshift_left     ."(lsl)"
+lsr             =
+asr             =
+lshift_right    ."(lsr)"
+string_of_int   =
+int_of_string   =
+format_int	."?format_int"
+}
+
+CONSTR{
+Division_by_zero	"__".Division_by_zero	0
+}
+}
+
+
+
+
+
+
+
+
+MODULE io IS Pervasives {
+TYPE{
+in_channel      =
+out_channel     =
+}
+
+VALUE{
+stdin           =
+std_in          .stdin	(* DANGER *)
+stdout          =
+std_out         .stdout	(* DANGER *)
+stderr          =
+std_err         .stderr	(* DANGER *)
+exit            =
+print_char      =
+print_string    =
+print_int       =
+print_float     =
+print_endline   =
+print_newline   =
+prerr_char      =
+prerr_string    =
+prerr_int       =
+prerr_float     =
+prerr_endline   =
+read_line       =
+read_int        =
+read_float      =
+open_out        =
+open_out_bin    =
+open_out_gen    =
+flush           =
+output_char     =
+output_string   =
+output          =
+output_byte     =
+output_binary_int       =
+output_value    =
+output_compact_value    .output_value (* DANGER *)
+seek_out        =
+pos_out         =
+out_channel_length      =
+close_out       =
+open_in         =
+open_in_bin     =
+open_in_gen     =
+input_char      =
+input_line      =
+input           =
+really_input    =
+input_byte      =
+input_binary_int =
+input_value     =
+seek_in         =
+pos_in          =
+in_channel_length =
+close_in        =
+fast_input	."?fast_input"
+fast_really_input	."?fast_really_input"
+fast_output	."?fast_output"
+input_scan_line	."?input_scan_line"
+open_descriptor_out     "Caml__csl".open_descriptor_out
+open_descriptor_in      "Caml__csl".open_descriptor_in
+}
+
+CONSTR{
+End_of_file	"__".End_of_file	0
+}
+}
+
+
+
+
+
+
+MODULE list IS List {
+VALUE{
+"@"             Pervasives."@"
+list_length     .length
+hd              =
+tl              =
+rev             =
+map             =
+do_list         .iter
+it_list         .fold_left
+list_it         .fold_right
+do_list2        .iter2
+map2            =
+it_list2        .fold_left2
+list_it2        .fold_right2
+for_all         =
+exists          =
+mem             =
+memq            =
+assoc           =
+mem_assoc       =
+assq            =
+flat_map        "Caml__csl".flat_map
+except          "Caml__csl".except
+exceptq         "Caml__csl".exceptq
+subtract        "Caml__csl".subtract
+union           "Caml__csl".union
+intersect       "Caml__csl".intersect
+index           "Caml__csl".index
+}
+}
+
+
+
+
+
+
+MODULE pair IS Pervasives {
+VALUE{
+fst             =
+snd             =
+split           List.split
+combine         "Caml__csl".combine
+map_combine     "Caml__csl".map_combine
+do_list_combine "Caml__csl".do_list_combine
+}
+}
+
+
+
+
+
+MODULE ref IS Pervasives {
+TYPE{
+ref             =
+}
+
+VALUE{
+"!"             =
+":="            =
+incr            =
+decr            =
+}
+
+CONSTR{
+ref             =	1
+}
+}
+
+
+
+
+
+MODULE stream IS Stream {
+TYPE{
+stream          .t
+}
+
+VALUE{
+stream_next     .next
+stream_from             "Caml__csl".from
+stream_of_string        "Caml__csl".stream_of_string
+stream_of_channel       "Caml__csl".stream_of_channel
+do_stream       .iter
+stream_check    "Caml__csl".check
+end_of_stream   .empty
+stream_get      .peek
+
+stream_require	."?stream__stream_require"
+parser_require	."?stream__parser_require"
+}
+
+CONSTR{
+Parse_failure   =	0
+Parse_error     = 	0
+}
+}
+
+
+
+
+
+
+MODULE string IS String {
+VALUE{
+"^"             Pervasives."^"
+string_length   .length
+nth_char        .get
+set_nth_char    .set
+create_string   .create
+make_string     .make
+sub_string      .sub
+fill_string     .fill
+blit_string     .blit
+string_for_read .escaped
+replace_string  "Caml__csl".replace_string
+eq_string       ."(=)"	(* DANGER *)
+neq_string      ."(<>)"	(* DANGER *)
+le_string       ."(<=)"	(* DANGER *)
+lt_string       ."(<)"	(* DANGER *)
+ge_string       ."(>=)"	(* DANGER *)
+gt_string       ."(>)"	(* DANGER *)
+compare_strings "Caml__csl".compare_strings (* primitive ! *)
+}
+}
+
+
+
+
+
+
+MODULE vect IS Array {
+
+VALUE{
+vect_length     .length
+vect_item       .get
+vect_assign     .set
+make_vect       .create
+make_matrix     .create_matrix
+concat_vect     .append
+sub_vect        .sub
+copy_vect       .copy
+fill_vect       .fill
+blit_vect       .blit
+do_vect         .iter
+map_vect        .map
+list_of_vect    .to_list
+vect_of_list    .of_list
+map_vect_list   "Caml__csl".map_vect_list
+}
+}
+
+
+
+COPY	char	fchar
+COPY	string	fstring
+COPY	vect	fvect
+
+
+
+
+
+
+
+(* Other libraries *)
+
+
+MODULE obj IS Obj {
+TYPE{
+obj             .t
+}
+
+VALUE{
+repr            =
+magic_obj       .magic
+magic           =
+is_block        =
+obj_tag         .tag
+obj_size        .size
+obj_field       .field
+set_obj_field   .set_field
+obj_block       .new_block
+update          =
+}
+}
+
+
+MODULE toplevel IS Topdirs {
+VALUE{
+quit		."?quit"
+include         .dir_use
+load		."?load"
+compile		."?compile"
+load_object     .dir_load
+trace		."?trace"
+untrace		."?untrace"
+verbose_mode	."?verbose_mode"
+install_printer	."?install_printer"
+remove_printer	."?remove_printer"
+set_print_length	."?set_print_length"
+debug_mode	."?debug_mode"
+cd		."?cd"
+directory	."?directory"
+}
+}
+
+

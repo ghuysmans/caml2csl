@@ -1,0 +1,20 @@
+
+(* stdlib: arg *)
+
+MODULE arg OPEN Arg {
+TYPE{
+spec	=
+}
+
+VALUE{
+parse	"Caml__csl".arg_parse
+}
+
+CONSTR{
+String	=	1
+Int	=	1
+Unit	=	1
+Float	=	1
+Bad	=	1
+}
+}

@@ -1,0 +1,24 @@
+
+Installation procedure:
+=======================
+
+  read the file INSTALL
+
+
+Documentation:
+==============
+
+ - the caml2csl manpage is in man/ . It describes the options.
+ - read man/README for more information, examples, hacks, ...
+
+
+Bug Reports:
+============
+
+  Of course, caml2csl is probably bogus...
+  You can send your bug reports to:
+
+    barras@pauillac.inria.fr
+
+  Other comments (especially on the documentation) are welcome.
+

@@ -1,0 +1,20 @@
+
+(* stdlib: queue *)
+
+MODULE queue IS Queue {
+TYPE{
+t       =
+}
+VALUE{
+new     .create
+add     =
+take    =
+peek    =
+clear   =
+length  =
+iter    =
+}
+CONSTR{
+Empty   =       0
+}
+}

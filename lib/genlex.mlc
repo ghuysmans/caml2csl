@@ -1,0 +1,21 @@
+
+(* stdlib: genlex *)
+
+MODULE genlex OPEN Genlex {
+TYPE{
+token	=
+}
+
+VALUE{
+make_lexer	=
+}
+
+CONSTR{
+Kwd	=	1
+Ident	=	1
+Int	=	1
+Float	=	1
+String	=	1
+Char	=	1
+}
+}

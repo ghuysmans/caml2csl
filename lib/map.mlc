@@ -1,0 +1,15 @@
+
+(* stdlib: map *)
+
+MODULE map IS Caml_map {
+TYPE{
+t       =
+}
+VALUE{
+empty   =
+add     =
+find    =
+remove  =
+iter    =
+}
+}

@@ -1,0 +1,40 @@
+
+(* stdlib: parsing *)
+
+MODULE parsing OPEN Parsing {
+TYPE{
+parse_tables	=
+}
+
+VALUE{
+symbol_start	=
+symbol_end	=
+rhs_start	=
+rhs_end		=
+clear_parser	=
+
+yyparse		=
+peek_val	=  (* changement de type *)
+is_current_lookahead	=
+}
+
+CONSTR{
+yyexit		.YYexit	1
+Parse_error	=	0
+}
+
+LABEL{
+actions		=  (* changement de type *)
+transl		=
+lhs		=
+len		=
+defred		=
+dgoto		=
+sindex		=
+rindex		=
+gindex		=
+tablesize	=
+table		=
+check		=
+}
+}

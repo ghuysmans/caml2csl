@@ -1,0 +1,145 @@
+
+(* parenthesis around arrow types in variant-type declarations *)
+
+type aaa = CCC of int->int;;
+
+(*
+exception Exc of (int -> int)
+      exception Exc2;;
+type zZZ= Zzz of int;;
+*)
+
+(* mutable constructor *)
+
+type tt = CC of mutable int;;
+
+(* captures of variables *)
+
+let rec G F f =
+  let f_0=0 in G F f;;
+
+let F F =
+  let f_0=0 in F f_0;;
+
+
+(* the type ZZZ is known because it is in toto.mli *)
+
+(zzz 0:ZZZ);;
+
+
+(* pattern matrix, fun and function *)
+
+let ff = fun
+  [] [] -> (fun x -> x)
+| _ x -> fun
+           [] -> []
+         | x -> x
+;;
+
+(* where rec *)
+
+let f=g where g (x,y) = (13 +5,0) and gg =true;;
+
+
+(* references: ref -> { contents = ... } *)
+
+let x=ref (-0);;
+let y=(ref__ref) 0;;
+match y with ref__ref(z) ->();;
+match y with (ref z) -> ();;
+
+
+(* characters *)
+
+let y=`y`;;
+let z=`\``;;
+let zz=`'`;;
+
+(* streams *)
+
+let rec parse_loop = function
+  [< '0 ; parse_loop n >] -> n
+| [< 'n >] -> n
+;;
+
+(* change in streams behavior *)
+let s = [< '1 ; '2 >];;
+let t = [< s; '1 >];;
+stream_next t;;
+stream_next s;;
+(* yields 1 2 in Caml-Light, 1 1 in Caml-Special-Light *)
+
+
+(* infix and prefix, difference between builtin and user-defined infixes *)
+
+not true;;
+bool__prefix not;;
+
+#infix "o";;
+
+let prefix o f g x= f(g x);;
+let prefix + x y = x + y;;
+f o f o f;;
+1+2;;
+
+#uninfix "o";;
+o f f;;
+
+
+
+(* dot parenthesis! *)
+
+int__prefix+;;
+
+
+(* new keywords of ocaml *)
+
+let new () = ();;
+
+(* module Arg changed *)
+
+arg__parse ["-help", arg__Unit (fun () -> prerr_endline "help!")]
+  (fun s -> ())
+;;
+
+
+(* warns that combine is now currified *)
+
+pair__combine;;
+
+
+(* constructors of tuples *)
+
+type t=C of int*int;;
+
+match C (0,0) with C p -> p;;
+
+(* NOT TRANSLATED PROPERLY: *)
+(*
+let p= 0,0 in C p;;
+match C (0,0) with C (z:int*int) -> z;;
+match C (0,0) with C ((x,y) as z) -> z;;
+match C (0,0) with C ((0,0)|(1,1)) -> 0;;
+*)
+
+
+(* conflicts due to open directives: remove the comments of next line
+   retry; and then:
+      mv toto.mlc2 toto.mlc
+      touch toto.camli
+      make *)
+(*#open "tata";;*)
+
+
+(* removes references to the module being compiled *)
+#open "toto";;
+
+let idz (x:ZZZ)= toto__zzz 0;;
+
+tata__idz;;
+
+tata__zzz 0;;
+
+zzz 0;;
+toto__zzz 0;;
+

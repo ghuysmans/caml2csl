@@ -1,0 +1,21 @@
+
+(* stdlib: hashtbl *)
+
+MODULE hashtbl IS Hashtbl {
+TYPE{
+t               =
+}
+
+VALUE{
+new             .create
+clear           =
+add             =
+find            =
+find_all        =
+remove          =
+do_table        .iter
+do_table_rev	"Caml__csl".do_table_rev
+hash            =
+hash_param      =
+}
+}

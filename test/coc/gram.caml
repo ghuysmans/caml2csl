@@ -1,0 +1,208 @@
+(*+all+*)
+#open "genlex";;   
+#open "inf_opt";;
+
+type expr=
+    SRT of sort
+  | REF of string
+  | ABS of string*expr*expr
+  | APP of expr*expr
+  | PROD of string*expr*expr
+;;
+
+
+(*> conversions term <=> expr *)
+let var_of_ref n="x"^(string_of_int n);;         
+
+let first_fv=ref 0;;
+
+let rec find_free_var ctx=
+  let v=var_of_ref !first_fv in
+    if (mem v ctx) then ((incr first_fv);(find_free_var ctx)) else v
+;;
+
+let rec var_indep x= function
+   SRT _ -> true
+ | REF y -> x<>y
+ | ABS (y,tt,t) -> (var_indep x tt) & ((x=y) or (var_indep x t))
+ | APP (u,v) -> (var_indep x u) & (var_indep x v)
+ | PROD (y,tt,u) -> (var_indep x tt) & ((x=y) or (var_indep x u))
+;;
+
+let rec term_of_expr ctx=function
+    SRT s -> Srt s
+  | REF x -> Ref (index x ctx)
+  | ABS (x,tt,t) -> Abs ((term_of_expr ctx tt),(term_of_expr (x::ctx) t))
+  | APP (u,v) -> App ((term_of_expr ctx u),(term_of_expr ctx v))
+  | PROD (x,tt,u) -> Prod ((term_of_expr ctx tt),(term_of_expr (x::ctx) u))
+;;
+
+let expr_of_term ctx t= ((first_fv:=0) ; (exp_of_trm ctx t))
+where rec exp_of_trm ctx=function
+    Srt s -> SRT s
+  | Ref n -> (match cons_item ctx n with
+                inleft x -> REF x
+              | inright -> failwith "Fatal: rupture d'invariant!")
+  | Abs (tt,t)-> let v=find_free_var ctx in
+                 ABS (v,(exp_of_trm ctx tt),(exp_of_trm (v::ctx) t))
+  | App (u,v)-> APP ((exp_of_trm ctx u),(exp_of_trm ctx v))
+  | Prod (tt,u)-> let v=find_free_var ctx in
+                 PROD (v,(exp_of_trm ctx tt),(exp_of_trm (v::ctx) u))
+;;
+
+
+(*> affichage *)
+let string_of_sort=function  kind -> "Kind" | prop -> "Prop";;
+
+let rec string_of_expr=function
+    SRT s -> string_of_sort s
+  | REF x -> x
+  | ABS (x,tt,t) -> "["^x^":"^(string_of_expr tt)^"]"^(string_of_expr t)
+  | APP (u,v) -> "("^(string_of_app u)^" "^(string_of_expr v)^")"
+  | PROD (x,tt,u) -> if var_indep x u
+                     then (string_of_arrow tt)^"->"^(string_of_expr u)
+                     else "("^x^":"^(string_of_expr tt)^")"^(string_of_expr u)
+
+and string_of_app=function
+    APP (u,v) -> (string_of_app u)^" "^(string_of_expr v)
+  | t -> string_of_expr t
+
+and string_of_arrow=function
+    ABS u -> "("^(string_of_expr (ABS u))^")"
+  | PROD u -> "("^(string_of_expr (PROD u))^")"
+  | t -> string_of_expr t
+;;
+
+let print_term ctx t=print_string (string_of_expr (expr_of_term ctx t));;
+
+(*> code noyau *)
+let CTX=ref([]:(string list));;
+
+let ENV=ref([]:env);;
+
+let exec_infer t= (match (infer !ENV t) with
+         (inleft tt)-> print_string "Type infere: "; print_term !CTX tt; print_newline()
+       | inright -> print_string "mal type.\n" )
+;;
+
+let exec_axiom x a= if (mem x !CTX) then print_endline "Nom deja utilise."
+                    else if (add_typ !ENV a)
+      then (ENV:=(a::!ENV) ; CTX:=(x::!CTX) ; print_endline (x^" admis."))
+      else print_endline ("Dans "^x^": pas une proposition.")
+;;
+
+let exec_check trm typ= if (check_typ !ENV trm typ)
+      then print_endline "Correct."
+      else print_endline "Echec."
+;;
+
+let exec_quit()=print_endline "\nAu revoir..."; exit 0;;
+
+let exec_delete()= try print_endline ((hd !CTX)^" supprime."); ENV:=(tl !ENV) ; CTX:=(tl !CTX) 
+                   with (Failure "hd") -> print_endline "environement deja vide."
+;;
+
+let exec_list()=
+  do_list (fun x -> print_string (x^" ")) (rev !CTX);
+  print_newline()
+;;
+
+(*> lexer *)
+let lexer=make_lexer
+      ["Prop"; "Kind"; "["; "]"; "("; ")"; ":"; "->"; "let"; "in"; "_"; ",";
+                ":="; "Quit";"Axiom";"Infer";"Check";"Delete";"List";"."]
+;;
+
+(*> parser *)
+let rec parse_star p= function       
+    [< p x ; (parse_star p) l >] -> x::l
+  | [< >] -> []
+;;
+
+let anon_var= function
+    [< 'Kwd "_" >] -> "_"
+  | [< 'Ident x >] -> x
+;;
+
+let virg_an_var= function
+    [< 'Kwd "," ; anon_var x >] -> x
+;;
+
+let lident= function
+    [< anon_var x ; (parse_star virg_an_var) l >] -> x::l
+;;
+
+let parse_atom= function
+    [< 'Kwd "Prop" >] -> SRT prop
+  | [< 'Kwd "Kind" >] -> SRT kind
+  | [< 'Ident x >] -> REF x
+;;
+
+let rec parse_expr= function
+    [< 'Kwd "[" ; lident l ; 'Kwd ":" ; parse_expr typ ; 'Kwd "]" ; parse_expr trm >]
+               -> list_it (fun x t->ABS (x,typ,t)) l trm
+  | [< 'Kwd "let" ; anon_var x ; 'Kwd ":" ; parse_expr typ ; 'Kwd ":=" ; parse_expr arg ;
+        'Kwd "in" ; parse_expr trm >] -> (APP ((ABS (x,typ,trm)),arg))
+  | [< 'Kwd "(" ; parse_expr1 r >] -> r
+  | [< parse_atom at ; (parse_expr2 at) r >] -> r 
+
+and parse_expr1=function
+    [< 'Kwd "_" ; (parse_end_pi ["_"]) r >] -> r
+  | [< 'Ident x ; (parse_expr3 x) r >] -> r
+  | [< parse_expr t1 ; (parse_star parse_expr) l ; 'Kwd ")" ;
+        (parse_expr2 (it_list (fun t a->APP (t,a)) t1 l)) r >] -> r
+
+and parse_expr2 at= function
+    [< 'Kwd "->" ; parse_expr t >] -> PROD ("_",at,t)
+  | [< >] -> at
+
+and parse_expr3 x=function
+    [< 'Kwd ","; anon_var y; (parse_end_pi [x;y]) r >] -> r
+  | [< 'Kwd ":"; parse_expr typ; 'Kwd ")"; parse_expr trm >] -> PROD(x,typ,trm)
+  | [< 'Kwd "->" ; parse_expr t ; (parse_star parse_expr) l ; 'Kwd ")"; str >]
+               -> parse_expr2 (it_list (fun t a->APP(t,a)) (PROD ("_",(REF x),t)) l) str
+  | [< (parse_star parse_expr) l ; 'Kwd ")" ; str>]
+               -> parse_expr2 (it_list (fun t a->APP(t,a)) (REF x) l) str
+
+and parse_end_pi lb=function
+    [< (parse_star virg_an_var) l; 'Kwd ":" ; parse_expr typ; 'Kwd ")" ; parse_expr trm >] 
+               -> list_it (fun x t->PROD(x,typ,t)) (lb@l) trm
+;;
+
+let parse_term ctx strm=term_of_expr ctx (parse_expr strm);;
+
+let parse_cmd ctx=function
+    [< 'Kwd "Infer" ; (parse_term ctx) t ; 'Kwd "." >] -> exec_infer t
+  | [< 'Kwd "Axiom" ; 'Ident x ; 'Kwd ":" ; (parse_term ctx) ax ; 'Kwd "." >] -> exec_axiom x ax
+  | [< 'Kwd "Check" ; (parse_term ctx) trm ; 'Kwd ":" ; (parse_term ctx) typ ; 'Kwd "." >]
+                -> exec_check trm typ  
+  | [< 'Kwd "Quit" ; 'Kwd "." >] -> exec_quit()
+  | [< 'Kwd "Delete" ; 'Kwd "." >] -> exec_delete()
+  | [< 'Kwd "List" ; 'Kwd "." >] -> exec_list()
+;;
+
+(*> boucle toplevel *)
+let rec skip_til_dot= function
+    [< 'Kwd "." >] -> ()
+  | [< '_ ; strm >] -> skip_til_dot strm
+;;
+
+let prompt()= print_string "\nCoc < "; flush stdout;;
+
+let parse_commande strm=
+  prompt();
+  try parse_cmd !CTX strm
+  with Parse_error | Parse_failure | Not_found
+          -> skip_til_dot strm;
+             print_endline "\nErreur de syntaxe."
+;;
+
+let rec top_loop= function
+    [< parse_commande _ ; strm >] -> top_loop strm
+  | [< >] -> print_endline "EOF!"; flush stdout
+;;
+
+let go()= top_loop (lexer (stream_of_channel stdin));;
+
+go();;
+(*+all+*)

@@ -1,0 +1,20 @@
+
+(* stdlib: stack *)
+
+MODULE stack IS Stack {
+TYPE{
+t       =
+}
+
+VALUE{
+new     .create
+push    =
+pop     =
+clear   =
+length  =
+iter    =
+}
+CONSTR{
+Empty   =
+}
+}

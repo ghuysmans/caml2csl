@@ -1,0 +1,155 @@
+.TH CAML2CSL 1 "Nov 1st 1996"
+
+.SH NAME
+
+caml2csl \- The Caml-Light to Caml-Special-Light and Objective-Caml translator
+
+.SH SYNOPSIS
+
+.B caml2csl
+[
+.BI \-bare
+]
+[
+.BI \-c \ filename
+]
+[
+.BI \-clib \ filename
+]
+[
+.BI \-include \ directory
+]
+[
+.BI \-nowarning
+]
+[
+.BI \-o \ filename
+]
+[
+.BI \-open \ module-set
+]
+[
+.BI \-v
+]
+[
+.BI \-verbose
+]
+[
+.BI \-I \ directory
+]
+[
+.BI \-L
+]
+[
+.BI \-O \ module-set
+]
+[
+.BI \-W
+]
+.I file ...
+
+
+.SH DESCRIPTION
+
+.B caml2csl
+does the following translations (w.r.t. the extension of 
+.IR file
+):
+
+.TP
+.BI - \ modname.camli \ to \ csl_modname.mli
+Translates the interface of
+.I modname.
+Note that the basename of the file may change if the module name begins with an upper case. The file
+.I modname.zc
+is generated. If
+.I modname.mlc
+exists, then the information it contains is loaded before translating
+.I modname.camli.
+.TP
+.BI - \ modname.caml \ to \ csl_modname.ml
+Translates the implementation of
+.I modname.
+In order to avoid some inconsistencies, caml2csl checks if
+.I modname.zc
+exists when the interface exists (file
+.I modname.camli).
+If not, caml2csl fails, because the interface must be translated first. When no interface is found, caml2csl checks the existence of
+.I modname.mlc
+that should be loaded before the translation (the
+.I modname.zc
+file is generated after the translation).
+.TP
+.BI - \ modname.mlc \ to \ modname.zc
+Compiles translation informations of the user. It is not necessary to compile .mlc before .camli (when translating .camli, and if a .mlc is found, it is used to translate the .camli). This is usefull only when you want to make the conversion file of a module without having its sources.
+
+.SH
+To be able to translate the functions of the Caml-Light Standard Library, caml2csl needs a
+.I core conversion file.
+The core conversion file specifies the translation information for the core library of Caml-Light (for example how to translate builtin__int, etc). 
+
+
+.SH OPTIONS
+
+.TP
+.BI \-bare
+Tells caml2csl not to load any core conversion file. This option may be used to generate a .zlc file without the default translations.
+.TP
+.BI \-c \ filename
+Tells caml2csl to compile
+.IR filename
+(generally with extension
+.I .mlca)
+as a core conversion file. See the option -o.
+.TP
+.BI \-clib \ filename
+Name of the core conversion file to load. If no -clib option is specified, caml2csl uses the core conversion file created during the installation
+.IR (std.zlc
+by default).
+.TP
+.BI \-include \ directory
+Adds
+.IR directory
+to the loadpath in order to find the 
+core conversion file or the
+.IR .zc
+of the modules used by
+.IR file.
+Equivalent to the option -I.
+.TP
+.BI \-nowarning
+Do not display warnings. Only those that will make compilation fail are mentioned. Equivalent to the option -W
+.TP
+.BI \-o \ filename
+Name of output core conversion file (when compilimg a core conversion file with option -c). Default is 
+.IR a.zlc.
+The output file is to use as argument of the option -clib.
+\.
+.TP
+.BI \-open \ module-set
+Default open set (see 
+.IB camlc (1)
+for more information).
+Equivalent to the option -O.
+.TP
+.BI \-v
+displays version number of caml2csl.
+.TP
+.BI \-verbose
+displays a lot of output, and do not remove object files when fails.
+.TP
+.BI \-I \ directory
+Equivalent to the option -include.
+.TP
+.BI \-L
+Equivalent to the option -verbose.
+.TP
+.BI \-O \ module-set
+Equivalent to the option -open.
+.TP
+.BI \-W
+Equivalent to the option -nowarning.
+
+.SH SEE ALSO
+
+.IR man/README
