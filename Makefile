@@ -19,15 +19,15 @@ build-src:
 	@echo === Compilation completed ===
 
 install:
-	mkdirhier $(BINDIR)
-	mkdirhier $(INSTALLDIR)
+	mkdir -p $(BINDIR)
+	mkdir -p $(INSTALLDIR)
 	(cd src; make install)
 	(cd launch; make install)
 	(cd lib; make install)
 	@echo === Installation done ===
 
 install-manpage:
-	mkdirhier $(MANDIR)/man1
+	mkdir -p $(MANDIR)/man1
 	cp man/caml2csl.1 $(MANDIR)/man1/caml2csl.1
 
 clean:
