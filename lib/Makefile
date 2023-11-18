@@ -36,4 +36,4 @@ clean:
 	ocamlc -c $<
 
 .ml.cmo:
-	ocamlc -c $<
+	ocamlc -c -pp camlp4o -unsafe-string $<
