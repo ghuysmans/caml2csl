@@ -1,5 +1,5 @@
 
-CPP=/usr/ucb/cpp -P -Dunix
+CPP=cpp -P -Dunix -traditional-cpp
 
 MANDIR = /usr/local/man
 
