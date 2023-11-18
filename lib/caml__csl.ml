@@ -98,7 +98,7 @@ let do_list_combine f =
 
 let rec from f=
   try [< 'f() ; (from f) >]
-  with Stream.Parse_failure -> [< >]
+  with Stream.Failure -> [< >]
 ;;
 
 (* Stream.of_string and Stream.of_channel are not equivalent to those funs *)
@@ -106,13 +106,13 @@ let stream_of_string s =
   let cnt = ref (-1) in
   from (fun () -> incr cnt;
                   if !cnt > String.length s 
-                  then raise Stream.Parse_failure
+                  then raise Stream.Failure
                   else s.[ !cnt ])
 ;;
 
 let stream_of_channel ch =
   from (fun () -> try input_char ch
-                  with End_of_file -> raise Stream.Parse_failure)
+                  with End_of_file -> raise Stream.Failure)
 ;;
 
 let check p= parser [< 'x when p x >] -> x;;
