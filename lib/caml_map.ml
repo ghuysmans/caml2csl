@@ -40,7 +40,7 @@ let iter f m =
     Empty -> ()
   | Node(l, b, r, _) ->
       iter l;
-      f b.key b.data;
-      List.iter (f b.key) b.prev;
+      ignore (f b.key b.data);
+      List.iter (fun x -> ignore (f b.key x)) b.prev;
       iter r
   in iter m.tree;;
