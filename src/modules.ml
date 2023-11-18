@@ -139,21 +139,21 @@ let find_module modname =
 
 let opened_modules = ref
   { mod_name = "";
-    mod_values = hashtbl__new 0;
-    mod_constrs = hashtbl__new 0;
-    mod_labels = hashtbl__new 0;
-    mod_types = hashtbl__new 0;
-    mod_arity = hashtbl__new 0 }
+    mod_values = hashtbl__new 73;
+    mod_constrs = hashtbl__new 53;
+    mod_labels = hashtbl__new 41;
+    mod_types = hashtbl__new 29;
+    mod_arity = hashtbl__new 53 };
 
 ;;
 
 let csl_opened_modules = ref
   { mod_name = "";
-    mod_values = hashtbl__new 0;
-    mod_constrs = hashtbl__new 0;
-    mod_labels = hashtbl__new 0;
-    mod_types = hashtbl__new 0;
-    mod_arity = hashtbl__new 0 }
+    mod_values = hashtbl__new 73;
+    mod_constrs = hashtbl__new 53;
+    mod_labels = hashtbl__new 41;
+    mod_types = hashtbl__new 29;
+    mod_arity = hashtbl__new 53 };
 ;;
 
 let opened_modules_names = ref ([]: string list);;
@@ -177,7 +177,7 @@ let reset_csl_opened_modules () =
       mod_constrs = hashtbl__new 53;
       mod_labels = hashtbl__new 41;
       mod_types = hashtbl__new 29;
-      mod_arity = hashtbl__new 0 }
+      mod_arity = hashtbl__new 53 }
 ;;
 
 
