@@ -59,9 +59,12 @@ let load_core_lib libname=
                                 * (string,string) Hashtbl.t) in
     close_in ic;
     merge_state st
-  with End_of_file | Failure _ ->
+  with End_of_file ->
     close_in ic;
     failwith "Corrupted standard conversion file"
+  | Failure f ->
+    close_in ic;
+    failwith f
 ;;
 
 let write_core_lib libname =
