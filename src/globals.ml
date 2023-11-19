@@ -20,9 +20,9 @@ let default_used_interfaces =
 
 
 
-type 'a option=
-   None
- | Some of 'a
+type 'a option0=
+   None0
+ | Some0 of 'a
 ;;
 
 
@@ -42,7 +42,7 @@ let todo s =
 let file_exists filename =
   try
     close_in (open_in filename); true
-  with sys__Sys_error _ ->
+  with Sys_error _ ->
     false
 ;;
 
@@ -51,22 +51,22 @@ exception Cannot_find_file of string;;
 let find_in_path filename =
   if file_exists filename then
     filename
-  else if filename__is_absolute filename then
+  else if Filename.is_absolute filename then
     raise(Cannot_find_file filename)
   else
     let rec find = function
       [] ->
         raise(Cannot_find_file filename)
     | a::rest ->
-        let b = filename__concat a filename in
+        let b = Filename.concat a filename in
           if file_exists b then b else find rest
     in find !load_path
 ;;
 
 let remove_file f =
   try
-    sys__remove f
-  with sys__Sys_error _ ->
+    Sys.remove f
+  with Sys_error _ ->
     ()
 ;;
 
@@ -84,29 +84,29 @@ let mk_list sep l=
 
 
 let lower c=
-  char_of_int (if c>=65 & c<=90 then c+32 else c)
+  Char.chr (if c>=65 & c<=90 then c+32 else c)
 ;;
 
 let upper c=
-  char_of_int (if c>=97 & c<=122 then c-32 else c)
+  Char.chr (if c>=97 & c<=122 then c-32 else c)
 ;;
 
 let change_case f s=
   let s'=s^"" in
-  if s'<>"" then s'.[0] <- f (int_of_char s'.[0]);
+  if s'<>"" then s'.[0] <- f (Char.code s'.[0]);
   s'
 ;;
 
 
 let add_table t1 t2 =
-  hashtbl__do_table_rev (hashtbl__add t2) t1
+  Caml__csl.do_table_rev (Hashtbl.add t2) t1
 ;;
 
 let remove_from_table tbl x =
-  hashtbl__do_table (fun y _ -> if x = y then hashtbl__remove tbl x) tbl
+  Hashtbl.iter (fun y _ -> if x = y then Hashtbl.remove tbl x) tbl
 ;;
 
 let table_add tbl x y =
   remove_from_table tbl x;
-  hashtbl__add tbl x y
+  Hashtbl.add tbl x y
 ;;

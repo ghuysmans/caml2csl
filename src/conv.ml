@@ -1,15 +1,15 @@
 
-#open "print";;
-#open "globals";;
-#open "syntax";;
-#open "modules";;
+open Print;;
+open Globals;;
+open Syntax;;
+open Modules;;
 
 
 type new_name = ID of string
               | LIST_ID of string
 ;;
 
-type table == (string*new_name) list;;
+type table = (string*new_name) list;;
 
 type genre = VAR of table | TYP | CONSTR of int | LABEL;;
 
@@ -30,14 +30,14 @@ let case_of_genre = function
 (* local name conversions *)
 
 let used_csl_unqual_id sel_fct s=
-    try hashtbl__find (sel_fct (find_csl_module "__")) s; true
+    try Hashtbl.find (sel_fct (find_csl_module "__")) s; true
     with Not_found ->
-     (try hashtbl__find (sel_fct (find_csl_module !csl_def_mod)) s;true
+     (try Hashtbl.find (sel_fct (find_csl_module !csl_def_mod)) s;true
       with Not_found -> false)
 ;;
 
 let used_csl_unqual_var (env:table) s=
-  (mem (ID s) (snd (split env))) or (used_csl_unqual_id values_of_module s)
+  (List.mem (ID s) (snd (List.split env))) or (used_csl_unqual_id values_of_module s)
 ;;
 
 
@@ -59,15 +59,15 @@ let extend_var env x=
 
 
 let rec conv_local_var (env:table) x=
-  try match (assoc x env) with
+  try match (List.assoc x env) with
         ID s -> s   (* preservation des captures *)
-      | sl -> (conv_local_var (except (x,sl) env) x)
+      | sl -> (conv_local_var (Caml__csl.except (x,sl) env) x)
   with Not_found ->
-    (try (hashtbl__find !defined_module.mod_values x).id
+    (try (Hashtbl.find !defined_module.mod_values x).id
      with Not_found ->
-       (try (hashtbl__find !conv_hints.mod_values x).id
+       (try (Hashtbl.find !conv_hints.mod_values x).id
         with Not_found ->
-          (try (hashtbl__find !opened_modules.mod_values x).id
+          (try (Hashtbl.find !opened_modules.mod_values x).id
            with Not_found -> extend_var env x)))
 ;;
 
@@ -110,9 +110,9 @@ let rec conv_pat arity env pat =
                            conv_pat_list arity env [pat1;pat2]
   | Zconstraintpat (pat, _) -> check_arity "a type cast";
                                conv_pat arity env pat
-  | Zrecordpat lbl_pat_list -> conv_pat_list 0 env (snd (split lbl_pat_list))
+  | Zrecordpat lbl_pat_list -> conv_pat_list 0 env (snd (List.split lbl_pat_list))
 
-and conv_pat_list arity env pat_list= it_list (conv_pat arity) env pat_list
+and conv_pat_list arity env pat_list= List.fold_left (conv_pat arity) env pat_list
 ;;  
   
 

@@ -1,6 +1,6 @@
 (* Printing a location in the source program *)
 
-#open "parsing";;
+open Parsing;;
 
 type location =
     Loc of int     (* Position of the first character *)

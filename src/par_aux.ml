@@ -1,12 +1,12 @@
 (* Auxiliary functions for parsing *)
 
-#open "globals";;
-#open "location";;
-#open "syntax";;
-#open "modules";;
+open Globals;;
+open Location;;
+open Syntax;;
+open Modules;;
 
 
-let def_gi s= GIname ((s,(get_current_location())),None);;
+let def_gi s= GIname ((s,(get_current_location())),None0);;
 
 
 let make_expr_chg desc chg=
@@ -45,28 +45,30 @@ let make_apply chg_desc= function
 ;;
 
 let make_unop op e1 desc=
-  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None)));
+  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None0)));
               e_chg=NO_CHANGE; e_loc= (snd op) },[e1])
 and make_binop op e1 e2 desc=
-  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None)));
+  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None0)));
               e_chg=NO_CHANGE; e_loc= (snd op) }, [e1;e2])
 and make_ternop op e1 e2 e3 desc=
-  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None)));
+  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None0)));
               e_chg=NO_CHANGE; e_loc= (snd op) },[e1;e2;e3])
 and make_infix op e1 e2 desc=
-  make_apply desc (e1, [{e_desc = Zident(ref (Zlocal (op,None)));
+  make_apply desc (e1, [{e_desc = Zident(ref (Zlocal (op,None0)));
               e_chg=NO_CHANGE; e_loc= (snd op) }; e2])
 ;;
 
 
 let make_list expr_list os =
-  makel (make_expr_chg(Zconstruct0 (def_gi "[]")) os) expr_list
-  where rec makel res = function
+  
+ let rec makel res = function
     [] ->
       res
   | e::l ->
       let cons_arg= make_expr(Ztuple [e;res]) in
       makel (make_expr (Zconstruct1((def_gi "::"),cons_arg))) l
+ in makel (make_expr_chg(Zconstruct0 (def_gi "[]")) os) expr_list
+  
 ;;
 
 

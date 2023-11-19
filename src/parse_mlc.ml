@@ -1,10 +1,10 @@
 
-#open "globals";;
-#open "syntax";;
-#open "modules";;
-#open "conv";;
-#open "enter";;
-#open "genlex";;
+open Globals;;
+open Syntax;;
+open Modules;;
+open Conv;;
+open Enter;;
+open Genlex;;
 
 
 
@@ -12,87 +12,87 @@ let lexer=make_lexer ["{";"}";"[";"]";"COPY";
            "MODULE";"OPEN";"IS";"VALUE";"TYPE";"CONSTR";"LABEL";"=";"."];;
 
 
-let parse_id= function
+let parse_id= parser
    [< 'Ident id >] -> id
  | [< 'String s >] -> s
 ;;
 
-let parse_new ol=function
+let parse_new ol=parser
    [< 'Kwd "=" >] -> {qual= !csl_def_mod; id= ol }
- | [< 'Kwd "."; parse_id nw >] -> {qual= !csl_def_mod; id= nw}
- | [< parse_id module; 'Kwd "." ; parse_id nw >] -> {qual= module; id= nw}
+ | [< 'Kwd "."; nw = parse_id >] -> {qual= !csl_def_mod; id= nw}
+ | [< module0 = parse_id; 'Kwd "." ; nw = parse_id >] -> {qual= module0; id= nw}
 ;;
 
-let parse_ligne sel= function
-   [< parse_id ol; (parse_new ol) qi >] -> enter_conv sel ol qi
+let parse_ligne sel= parser
+   [< ol = parse_id; qi = (parse_new ol) >] -> enter_conv sel ol qi
 ;;
 
-let parse_constr_ligne= function
-   [< parse_id ol; (parse_new ol) qi; 'Int ar >]
+let parse_constr_ligne= parser
+   [< ol = parse_id; qi = (parse_new ol); 'Int ar >]
                -> enter_conv (CONSTR ar) ol qi
 ;;
 
-let rec parse_bloc sel= function
+let rec parse_bloc sel= parser
    [< 'Kwd "}" >] -> () 
- | [< (parse_ligne sel) _ ; (parse_bloc sel) _ >] -> ()
+ | [< _ = (parse_ligne sel) ; _ = (parse_bloc sel) >] -> ()
 ;;
 
-let rec parse_constr_bloc= function
+let rec parse_constr_bloc= parser
    [< 'Kwd "}" >] -> () 
- | [< parse_constr_ligne _ ; parse_constr_bloc _ >] -> ()
+ | [< _ = parse_constr_ligne ; _ = parse_constr_bloc >] -> ()
 ;;
 
-let rec parse_cb= function
-   [< 'Kwd "VALUE" ; 'Kwd "{" ; (parse_bloc (VAR [])) _ >] -> ()
- | [< 'Kwd "TYPE" ; 'Kwd "{" ; (parse_bloc TYP) _ >] -> ()
- | [< 'Kwd "CONSTR" ; 'Kwd "{" ; parse_constr_bloc _ >] -> ()
- | [< 'Kwd "LABEL" ; 'Kwd "{" ; (parse_bloc LABEL) _ >] -> ()
+let rec parse_cb= parser
+   [< 'Kwd "VALUE" ; 'Kwd "{" ; _ = (parse_bloc (VAR [])) >] -> ()
+ | [< 'Kwd "TYPE" ; 'Kwd "{" ; _ = (parse_bloc TYP) >] -> ()
+ | [< 'Kwd "CONSTR" ; 'Kwd "{" ; _ = parse_constr_bloc >] -> ()
+ | [< 'Kwd "LABEL" ; 'Kwd "{" ; _ = (parse_bloc LABEL) >] -> ()
 ;;
 
-let rec parse_mb= function
+let rec parse_mb= parser
    [< 'Kwd "}" >] -> ()
- | [< parse_cb _; parse_mb _ >] -> ()
+ | [< _ = parse_cb; _ = parse_mb >] -> ()
 ;;
 
 
 
 let parse_opt_module md strm =
   defined_module := new_module md;
-  hashtbl__add module_table md !defined_module;
-  match strm with
-   [< 'Kwd "IS"; parse_id nm >]
+  Hashtbl.add module_table md !defined_module;
+  match strm with parser
+   [< 'Kwd "IS"; nm = parse_id >]
       -> csl_def_mod := nm
- | [< 'Kwd "OPEN"; parse_id nm >]
-      -> hashtbl__add mod_name_table md nm;
+ | [< 'Kwd "OPEN"; nm = parse_id >]
+      -> Hashtbl.add mod_name_table md nm;
          csl_def_mod := nm
  | [< >]
       -> let nm = (change_case upper md) in
-           hashtbl__add mod_name_table md nm;
+           Hashtbl.add mod_name_table md nm;
            csl_def_mod := nm
 ;;
 
-let parse_mlc = function
-   [< 'Kwd "MODULE"; parse_id md; (parse_opt_module md) _;
-      'Kwd "{"; parse_mb _ >] -> ()
+let parse_mlc = parser
+   [< 'Kwd "MODULE"; md = parse_id; _ = (parse_opt_module md);
+      'Kwd "{"; _ = parse_mb >] -> ()
 ;;
 
 let compile_mlc filename=
   let ch=open_in (filename ^ ".mlc") in
-  parse_mlc (lexer (stream_of_channel ch));
+  parse_mlc (lexer (Caml__csl.stream_of_channel ch));
   close_in ch
 ;;
 
 
-let parse_module = function
-   [< 'Kwd "COPY"; parse_id x; parse_id y >]
-      -> hashtbl__add module_table y (hashtbl__find module_table x)
- | [< 'Kwd "MODULE"; parse_id md; (parse_opt_module md) _;
-       'Kwd "{"; parse_mb _ >] -> ()
+let parse_module = parser
+   [< 'Kwd "COPY"; x = parse_id; y = parse_id >]
+      -> Hashtbl.add module_table y (Hashtbl.find module_table x)
+ | [< 'Kwd "MODULE"; md = parse_id; _ = (parse_opt_module md);
+       'Kwd "{"; _ = parse_mb >] -> ()
 ;;
 
 
-let rec parse_file = function
-   [< parse_module _; parse_file _ >] -> ()
+let rec parse_file = parser
+   [< _ = parse_module; _ = parse_file >] -> ()
  | [< >] -> ()
 ;;
 
@@ -101,10 +101,10 @@ let compile_stdfile filename =
   try
     let ch=open_in (find_in_path filename) in
       try 
-        parse_file (lexer (stream_of_channel ch));
+        parse_file (lexer (Caml__csl.stream_of_channel ch));
         close_in ch
       with
-        Parse_error -> failwith ("Syntax error in '" ^ filename ^ "'")
+        (Stream.Parse_error "") -> failwith ("Syntax error in '" ^ filename ^ "'")
   with Cannot_find_file _ -> failwith ("Cannot find library source '"
                                                       ^ filename ^ "'")
 ;;

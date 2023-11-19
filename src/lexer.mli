@@ -1,4 +1,4 @@
-#open "parser";;
+open Parser;;
 
 type lexical_error =
     Illegal_character
@@ -8,10 +8,10 @@ type lexical_error =
 
 exception Lexical_error of lexical_error * int * int;;
 
-value main: lexing__lexbuf -> token
-  and add_infix: string -> unit
-  and remove_infix: string -> unit
+val main: Lexing.lexbuf -> token
+  val add_infix: string -> unit
+  val remove_infix: string -> unit
 ;;
 
-value reset_infix: unit -> unit;;
-value infix_list: string list ref;;
+val reset_infix: unit -> unit;;
+val infix_list: string list ref;;

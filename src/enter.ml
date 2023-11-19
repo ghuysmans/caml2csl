@@ -1,9 +1,9 @@
-#open "globals";;
-#open "syntax";;
-#open "modules";;
-#open "emit";;
-#open "conv";;
-#open "changes";;
+open Globals;;
+open Syntax;;
+open Modules;;
+open Emit;;
+open Conv;;
+open Changes;;
 
 
 (* global name conversions *)
@@ -19,12 +19,12 @@ let extend g x=
 ;;
 
 let new_defined g x=
-  try (hashtbl__find (sel_of_genre g !defined_module) x).id
+  try (Hashtbl.find (sel_of_genre g !defined_module) x).id
                                         (* preservation des captures *)
   with Not_found ->
-   (try (hashtbl__find (sel_of_genre g !conv_hints) x).id
+   (try (Hashtbl.find (sel_of_genre g !conv_hints) x).id
     with Not_found ->
-      (try (hashtbl__find (sel_of_genre g !opened_modules) x).id
+      (try (Hashtbl.find (sel_of_genre g !opened_modules) x).id
        with Not_found -> extend g x))
 ;;
 
@@ -44,15 +44,15 @@ let enter_def_conv g s s' =
 ;;
 
 let enter_new_conv g x =
-  let new=new_defined g x in
-  enter_def_conv g x new
+  let new0=new_defined g x in
+  enter_def_conv g x new0
 ;;
 
 
 (* implementation and interface phrases *)
 
 let arity_of_type= function
-  Ztypetuple l -> list_length l
+  Ztypetuple l -> List.length l
 | _ -> 1
 ;;
 
@@ -79,10 +79,10 @@ let enter_new_label env ((label,loc),typ,_)=
 let define_new_type_intf name env= function
    Zabstract_type -> ()
  | Zvariant_type constrs ->
-      do_list (enter_new_constr env) constrs;
+      List.iter (enter_new_constr env) constrs;
       todo ("copy type declaration of " ^ name)
  | Zrecord_type labels ->
-      do_list (enter_new_label env) labels;
+      List.iter (enter_new_label env) labels;
       todo ("copy type declaration of " ^ name)
  | Zabbrev_type (eqloc,body) ->
       emit_chg eqloc "=";
@@ -91,20 +91,20 @@ let define_new_type_intf name env= function
 ;;
 
 let enter_typedecl_intf decl loc = 
-  do_list
+  List.iter
     (fun ((t,_),_,_) -> enter_new_conv TYP t) decl;
-  do_list (fun ((t,loct),vars,def) ->
-          let env=it_list add_local_var [] (fst (split vars)) in
-           do_list (chg_local_ident 0 (VAR env)) vars;
+  List.iter (fun ((t,loct),vars,def) ->
+          let env=List.fold_left add_local_var [] (fst (List.split vars)) in
+           List.iter (chg_local_ident 0 (VAR env)) vars;
            chg_local_ident 0 TYP (t,loct);
            define_new_type_intf t env def) decl
 ;;
 
 let enter_excdecl_intf decl loc=
-  do_list (fun (andloc,exc) ->
+  List.iter (fun (andloc,exc) ->
       emit_chg andloc "exception";
       enter_new_constr [] exc) decl;
-  todo ("copy exception declaration of " ^ (mk_list ", " (map
+  todo ("copy exception declaration of " ^ (mk_list ", " (List.map
      (function _, Zconstr0decl (s,_) -> s 
              | _, Zconstr1decl ((s,_),_,_) -> s)
     decl)))
@@ -113,56 +113,56 @@ let enter_excdecl_intf decl loc=
 let enter_valuedecl decl loc =
   let conv_val (loc1,(((s,_),_) as lid ,expr,prim)) =
      enter_new_conv (VAR []) s;
-     if prim = None then emit_chg loc1 "val"
+     if prim = None0 then emit_chg loc1 "val"
       else emit_chg loc1 "external";
      chg_ident 0 (VAR []) (GIname lid);
      chg_typ_expr false [] expr;
      match prim with
-       Some l -> emit_chg l "";
+       Some0 l -> emit_chg l "";
                  todo ("copy primitive " ^ s)
-     | None -> ()  in
-  do_list conv_val decl
+     | None0 -> ()  in
+  List.iter conv_val decl
 ;;
 
 
 
 let define_new_type name env= function
    Zabstract_type -> ()
- | Zvariant_type constrs -> do_list (enter_new_constr env) constrs
- | Zrecord_type labels -> do_list (enter_new_label env) labels
+ | Zvariant_type constrs -> List.iter (enter_new_constr env) constrs
+ | Zrecord_type labels -> List.iter (enter_new_label env) labels
  | Zabbrev_type (eqloc,body) -> emit_chg eqloc "="; chg_typ_expr false env body
 ;;
 
 
 let enter_typedecl decl = 
-  do_list (fun ((t,_),_,_) -> enter_new_conv TYP t) decl;
-  do_list (fun ((t,loc),vars,def) ->
-          let env=it_list add_local_var [] (fst (split vars)) in
-           do_list (chg_local_ident 0 (VAR env)) vars;
+  List.iter (fun ((t,_),_,_) -> enter_new_conv TYP t) decl;
+  List.iter (fun ((t,loc),vars,def) ->
+          let env=List.fold_left add_local_var [] (fst (List.split vars)) in
+           List.iter (chg_local_ident 0 (VAR env)) vars;
            chg_local_ident 0 TYP (t,loc);
            define_new_type t env def) decl
 ;;
 
-let enter_excdecl decl= do_list (fun (andloc,exc) ->
+let enter_excdecl decl= List.iter (fun (andloc,exc) ->
       emit_chg andloc "exception";
       enter_new_constr [] exc) decl;;
 
 
 let enter_letdef (rec_flag,pat_expr_list) =
-  let decl_names = conv_pat_list 0 [] (fst (split pat_expr_list)) in
+  let decl_names = conv_pat_list 0 [] (fst (List.split pat_expr_list)) in
   if rec_flag then begin
-    do_list (function (x, ID new) -> enter_def_conv (VAR []) x new
+    List.iter (function (x, ID new0) -> enter_def_conv (VAR []) x new0
                     | (x, _) -> todo
                    (x ^ " defined with constructor of arity greater than 1."))
             decl_names;
-    do_list (fun (pat,expr) ->
+    List.iter (fun (pat,expr) ->
              chg_pat decl_names pat;
              chg_expr 0 [] expr) pat_expr_list
   end else begin
-    do_list (fun (pat,expr) ->
+    List.iter (fun (pat,expr) ->
              chg_pat decl_names pat;
              chg_expr 0 [] expr) pat_expr_list;
-    do_list (function (x, ID new) -> enter_def_conv (VAR []) x new
+    List.iter (function (x, ID new0) -> enter_def_conv (VAR []) x new0
                     | (x, _) -> todo
                    (x ^ " defined with constructor of arity greater than 1."))
             decl_names

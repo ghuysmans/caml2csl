@@ -1,39 +1,39 @@
 /* The parser definition */
 
 %{
-#open "globals";;
-#open "syntax";;
-#open "location";;
-#open "lexer";;
-#open "par_aux";;
+open Globals
+open Syntax
+open Location
+open Lexer
+open Par_aux
 %}
 
 /* Tokens */
 
 /* Identifiers, prefixes, infixes */
-%token <string*location__location> IDENT
-%token <string*location__location> PREFIX
-%token <string*location__location> INFIX1
-%token <string*location__location> INFIX2
-%token <string*location__location> SUBTRACTIVE
-%token <string*location__location> INFIX3
-%token <string*location__location> INFIX4
+%token <string*Location.location> IDENT
+%token <string*Location.location> PREFIX
+%token <string*Location.location> INFIX1
+%token <string*Location.location> INFIX2
+%token <string*Location.location> SUBTRACTIVE
+%token <string*Location.location> INFIX3
+%token <string*Location.location> INFIX4
 /* Literals */
-%token <int*location__location> INT
-%token <char*location__location> CHAR
+%token <int*Location.location> INT
+%token <char*Location.location> CHAR
 %token <float> FLOAT
-%token <string*location__location> STRING
+%token <string*Location.location> STRING
 /* The end-of-file marker */
 %token EOF
 /* Special symbols */
-%token <location__location>EQUAL          /* "=" */
-%token <location__location>EQUALEQUAL     /* "==" */
+%token <Location.location>EQUAL          /* "=" */
+%token <Location.location>EQUALEQUAL     /* "==" */
 %token SHARP          /* "#" */
 %token AMPERSAND      /* "&" */
 %token QUOTE          /* "'" */
 %token LPAREN         /* "(" */
 %token RPAREN         /* ")" */
-%token <location__location>STAR           /* "*" */
+%token <Location.location>STAR           /* "*" */
 %token COMMA          /* "," */
 %token MINUSGREATER   /* "->" */
 %token DOT            /* "." */
@@ -41,17 +41,17 @@
 %token DOTLPAREN      /* ".(" */
 %token DOTLBRACKET    /* ".[" */
 %token COLON          /* ":" */
-%token <location__location>COLONCOLON     /* "::" */
-%token <location__location>COLONEQUAL     /* ":=" */
-%token <location__location>SEMI           /* ";" */
+%token <Location.location>COLONCOLON     /* "::" */
+%token <Location.location>COLONEQUAL     /* ":=" */
+%token <Location.location>SEMI           /* ";" */
 %token SEMISEMI       /* ";;" */
 %token LBRACKET       /* "[" */
 %token LBRACKETBAR    /* "[|" */
 %token LBRACKETLESS   /* "[<" */
 %token LESSMINUS      /* "<-" */
 %token RBRACKET       /* "]" */
-%token <location__location>UNDERSCORE     /* "_" */
-%token <location__location>UNDERUNDER     /* "__" */
+%token <Location.location>UNDERSCORE     /* "_" */
+%token <Location.location>UNDERUNDER     /* "__" */
 %token LBRACE         /* "{" */
 %token BAR            /* "|" */
 %token BARRBRACKET    /* "|]" */
@@ -60,7 +60,7 @@
 %token AMPERAMPER     /* "&&" */
 %token BARBAR         /* "||" */
 /* Keywords */
-%token <location__location>AND            /* "and" */
+%token <Location.location>AND            /* "and" */
 %token AS             /* "as" */
 %token BEGIN          /* "begin" */
 %token DO             /* "do" */
@@ -68,29 +68,29 @@
 %token DOWNTO         /* "downto" */
 %token ELSE           /* "else" */
 %token END            /* "end" */
-%token <location__location>EXCEPTION      /* "exception" */
+%token <Location.location>EXCEPTION      /* "exception" */
 %token FOR            /* "for" */
-%token <location__location>FUN            /* "fun" */
-%token <location__location>FUNCTION       /* "function" */
+%token <Location.location>FUN            /* "fun" */
+%token <Location.location>FUNCTION       /* "function" */
 %token IF             /* "if" */
 %token IN             /* "in" */
 %token LET            /* "let" */
 %token MATCH          /* "match" */
 %token MUTABLE        /* "mutable" */
-%token <location__location>NOT            /* "not" */
+%token <Location.location>NOT            /* "not" */
 %token OF             /* "of" */
 %token OR             /* "or" */
-%token <location__location>PREF           /* "prefix" */
-%token <location__location>REC            /* "rec" */
+%token <Location.location>PREF           /* "prefix" */
+%token <Location.location>REC            /* "rec" */
 %token THEN           /* "then" */
 %token TO             /* "to" */
 %token TRY            /* "try" */
 %token TYPE           /* "type" */
-%token <location__location>VALUE          /* "value" */
+%token <Location.location>VALUE          /* "value" */
 %token WHEN           /* "when" */
-%token <location__location>WHERE          /* "where" */
+%token <Location.location>WHERE          /* "where" */
 %token WHILE          /* "while" */
-%token <location__location>WITH           /* "with" */
+%token <Location.location>WITH           /* "with" */
 
 /* Precedences and associativities. Lower precedences first. */
 
@@ -190,7 +190,7 @@ Expr :
           { let ((i,(Loc (d2,f2))) as iloc)=$2 and e1=$1 and e3=$3 in
             let (Loc (d1,_))=e1.e_loc 
             and (Loc (d3,f3))=e3.e_loc in
-            if mem i !infix_list then
+            if List.mem i !infix_list then
               make_binop iloc e1 e3
  (SWAP (e1.e_loc,(Loc (d2,f2)),[
    REPLACE ((Loc (d1,d1)),"(");
