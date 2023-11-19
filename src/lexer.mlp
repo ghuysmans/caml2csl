@@ -4,6 +4,14 @@
 (**) open Parser;;
      open Location;;
 
+type lexical_error =
+    Illegal_character
+  | Unterminated_comment
+  | Bad_char_constant
+  | Unterminated_string;;
+
+exception Lexical_error of lexical_error * int * int;;
+
 (* For nested comments *)
 
 let comment_depth = ref 0;;
