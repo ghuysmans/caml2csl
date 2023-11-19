@@ -164,7 +164,14 @@ let print_break (nspaces, offset)= Format.print_break nspaces offset;;
 (* hashtbl *)
 
 let do_table_rev f h =
-  failwith "hashtbl__do_table_rev: no more available"
+  let g k' v = function
+    | None -> Some (k', [v])
+    | Some (k, l) when k = k' -> Some (k, v :: l)
+    | Some (k, l) -> List.iter (fun v -> ignore (f k v)) l; Some (k', [v])
+  in
+  match Hashtbl.fold g h None with
+  | None -> ()
+  | Some (k, l) -> List.iter (fun v -> ignore (f k v)) l
 ;;
 
 
