@@ -1,7 +1,7 @@
 
-#open "location";;
-#open "syntax";;
-#open "modules";;
+open Location;;
+open Syntax;;
+open Modules;;
 
 let string_of_loc (Loc (d,f))=
  "(" ^ (string_of_int d) ^ "," ^ (string_of_int f) ^ ")"
@@ -22,12 +22,12 @@ let string_of_gi=function
 let print_gi gi = prerr_endline (string_of_gi gi);;
 
 let print_tbl h=
-  hashtbl__do_table
+  Hashtbl.iter
      (fun s qi -> prerr_endline (s ^ "-->" ^ (string_of_gr (GRmodname qi)))) h
 ;;
 
 let print_ar h=
-  hashtbl__do_table (fun s ar -> prerr_endline (s^"->"^(string_of_int ar))) h
+  Hashtbl.iter (fun s ar -> prerr_endline (s^"->"^(string_of_int ar))) h
 ;;
 
 let print_module md=
@@ -46,7 +46,7 @@ let print_module md=
 
 let print_zc file=
   let f=open_in_bin file in
-  let (md,cmd)=(input_value f:(module*string)) in
+  let (md,cmd)=(input_value f:(module0*string)) in
   print_module md;
   prerr_endline ("==> OPEN: " ^ cmd);
   close_in f

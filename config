@@ -1,9 +1,0 @@
-
-CPP=cpp -P -Dunix -traditional-cpp
-
-MANDIR = /usr/local/man
-
-BINDIR = /usr/local/bin
-INSTALLDIR = /usr/local/lib/caml2csl
-
-LIBNAME=$(INSTALLDIR)/std.zlc

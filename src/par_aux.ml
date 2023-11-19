@@ -1,9 +1,8 @@
 (* Auxiliary functions for parsing *)
 
-#open "globals";;
-#open "location";;
-#open "syntax";;
-#open "modules";;
+open Location;;
+open Syntax;;
+open Modules;;
 
 
 let def_gi s= GIname ((s,(get_current_location())),None);;
@@ -60,13 +59,15 @@ and make_infix op e1 e2 desc=
 
 
 let make_list expr_list os =
-  makel (make_expr_chg(Zconstruct0 (def_gi "[]")) os) expr_list
-  where rec makel res = function
+  
+ let rec makel res = function
     [] ->
       res
   | e::l ->
       let cons_arg= make_expr(Ztuple [e;res]) in
       makel (make_expr (Zconstruct1((def_gi "::"),cons_arg))) l
+ in makel (make_expr_chg(Zconstruct0 (def_gi "[]")) os) expr_list
+  
 ;;
 
 

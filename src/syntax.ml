@@ -1,7 +1,6 @@
 (* The abstract syntax for the language *)
 
-#open "globals";;
-#open "location";;
+open Location;;
 
 
 type qualified_ident =
@@ -18,7 +17,7 @@ type mutable_flag =
 ;;
 
 (* location of an unqualified identifer, with optional prefix location *)
-type local_ident == (string*location)*(location option);;
+type local_ident = (string*location)*(location option);;
 
 (* GImodname: qual_id, location of module, dot, optional prefix, ident *)
 type global_ident=
@@ -40,7 +39,7 @@ type change=
 ;;
 
 type atomic_constant =
-    ACchar of char*location
+    ACchar of (char*location)
   | ACother
 ;;
 
@@ -48,7 +47,7 @@ type type_expression =
   { te_desc: type_expression_desc;
     te_loc: location }
 and type_expression_desc =
-    Ztypevar of string*location
+    Ztypevar of (string*location)
   | Ztypearrow of type_expression * type_expression
   | Ztypetuple of type_expression list
   | Ztypeconstr of global_ident * type_expression list

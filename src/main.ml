@@ -1,5 +1,5 @@
-#open "globals";;
-#open "compiler";;
+open Globals;;
+open Compiler;;
 
 let set_zlc s =
   core_lib := s
@@ -9,7 +9,7 @@ and add_include d =
   load_path := d :: !load_path
 and open_set set =
   try
-    modules__default_used_modules := assoc set default_used_interfaces
+    Modules.default_used_modules := List.assoc set default_used_interfaces
   with Not_found ->
     failwith ("unknown module set " ^ set)
 and log_mode () =
@@ -20,27 +20,27 @@ and no_warnings() =
 
 let main() =
 try
-  sys__catch_break true;
-  modules__default_used_modules := assoc "cautious" default_used_interfaces;
+  Sys.catch_break true;
+  Modules.default_used_modules := List.assoc "cautious" default_used_interfaces;
   load_path := [];
-  arg__parse ["-clib", arg__String set_zlc;
-              "-o", arg__String set_output;
-              "-c", arg__String merge_library;
-              "-I", arg__String add_include;
-              "-include", arg__String add_include;
-              "-O", arg__String open_set;
-              "-open", arg__String open_set;
-              "-L", arg__Unit log_mode;
-              "-W", arg__Unit no_warnings;
-              "-", arg__String anonymous]
+  Caml__csl.arg_parse ["-clib", Arg.String set_zlc;
+              "-o", Arg.String set_output;
+              "-c", Arg.String merge_library;
+              "-I", Arg.String add_include;
+              "-include", Arg.String add_include;
+              "-O", Arg.String open_set;
+              "-open", Arg.String open_set;
+              "-L", Arg.Unit log_mode;
+              "-W", Arg.Unit no_warnings;
+              "-", Arg.String anonymous]
              anonymous;
   exit 0
 with Failure s -> prerr_endline ("Fatal error: " ^ s ^ "."); exit 2
-   | sys__Break -> exit 2
-   | sys__Sys_error msg ->
+   | Sys.Break -> exit 2
+   | Sys_error msg ->
       prerr_endline ("Input/output error: " ^ msg ^ ".");
       exit 2
    | e -> prerr_endline "Unexpected exception. Please report."; raise e
 ;;
 
-printexc__f main (); exit 0;;
+Printexc.catch main ()
