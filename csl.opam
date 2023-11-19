@@ -1,0 +1,13 @@
+opam-version: "2.0"
+name: "csl"
+version: "dev"
+maintainer: "Guillaume Huysmans <ghuysmans99@gmail.com>"
+authors: "Bruno Barras <barras@pauillac.inria.fr>"
+homepage: "https://github.com/ghuysmans/caml2csl/"
+bug-reports: "https://github.com/ghuysmans/caml2csl/issues"
+dev-repo: "git+https://github.com/ghuysmans/caml2csl/"
+build: [["dune" "build" "-p" name "-j" jobs]]
+depends: [
+  "dune"
+]
+synopsis: "caml2csl support library"

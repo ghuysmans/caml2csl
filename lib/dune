@@ -1,0 +1,27 @@
+(library
+ (public_name csl)
+ (wrapped false)
+ (flags (:standard -w -3-9-27-39 -unsafe-string))
+ (preprocess (action (run %{bin:camlp4o} %{input-file}))))
+(rule
+ (deps builtins.mlca)
+ (target std.zlc)
+ (action (run caml2csl -o %{target} -c %{deps})))
+(rule
+ (deps std.zlc
+       arg.mlc baltree.mlc filename.mlc format.mlc gc.mlc genlex.mlc
+       hashtbl.mlc lexing.mlc map.mlc parsing.mlc printexc.mlc printf.mlc
+       queue.mlc random.mlc set.mlc sort.mlc sys.mlc
+       unix.mlc graphics.mlc)
+ (targets arg.zc baltree.zc filename.zc format.zc gc.zc genlex.zc
+          hashtbl.zc lexing.zc map.zc parsing.zc printexc.zc printf.zc
+          queue.zc random.zc set.zc sort.zc sys.zc
+          unix.zc graphics.zc)
+ (action (run ./gen.sh %{deps})))
+(install
+ (section lib)
+ (files std.zlc
+        arg.zc baltree.zc filename.zc format.zc gc.zc genlex.zc
+        hashtbl.zc lexing.zc map.zc parsing.zc printexc.zc printf.zc
+        queue.zc random.zc set.zc sort.zc sys.zc
+        unix.zc graphics.zc))
