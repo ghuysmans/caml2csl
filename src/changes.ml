@@ -38,8 +38,8 @@ let chg_atomic_cst= function
 exception Done;;
 
 let remove_prefix = function
-  Some0 loc -> emit_chg loc ""
-| None0 -> ()
+  Some loc -> emit_chg loc ""
+| None -> ()
 ;;
 
 let warn_special prfx loc = function
@@ -63,9 +63,9 @@ let chg_modname m mloc m' dloc =
 ;;
 
 let chg_prefix_id (Loc (deb,fin) as loc) afterdot s= fun
-  p0 p1 -> match (p0,p1) with ((ID s'), None0) -> if s<>s' then emit_chg loc s'
-| ((LIST_ID ls), None0) -> emit_chg loc ls
-| ((ID s'), (Some0 pref_loc)) -> emit_chg pref_loc afterdot;
+  p0 p1 -> match (p0,p1) with ((ID s'), None) -> if s<>s' then emit_chg loc s'
+| ((LIST_ID ls), None) -> emit_chg loc ls
+| ((ID s'), (Some pref_loc)) -> emit_chg pref_loc afterdot;
                    emit_chg loc ("("^s'^")")   (* attention a .( *)
 | (_, _) -> failwith ("prefix cannot be a tuple")
 
@@ -81,7 +81,7 @@ let check_var_arity arity loc = fun
 
 (* en fait, csl_infix *)
 let real_pref s prfx =
-  if List.mem s !Infix.list then (remove_prefix prfx; None0) else prfx
+  if List.mem s !Infix.list then (remove_prefix prfx; None) else prfx
 ;;
 
 let try_local_var arity = fun
@@ -126,7 +126,7 @@ let chg_ident arity g gi =
 ;;
 
 let chg_local_ident arity g sloc =
-  chg_ident arity g (GIname (sloc,None0))
+  chg_ident arity g (GIname (sloc,None))
 ;;
 
 
@@ -259,8 +259,8 @@ let rec chg_expr ar env ex=
                     (fun () -> chg_expr 0 ev e)]
  | Zfunction (opfun,l) -> 
        let ev,chgl=(match opfun with
-                       Some0 loc_fun -> chg_fun loc_fun env l 
-                     | None0 -> env,NO_CHANGE) in
+                       Some loc_fun -> chg_fun loc_fun env l 
+                     | None -> env,NO_CHANGE) in
        do_synchro (fun chg (pl,e) ->
             let evl=conv_pat_list 0 ev pl in
               do_default (chg_pat evl) pl chg;

@@ -1,6 +1,5 @@
 (* The abstract syntax for the language *)
 
-open Globals;;
 open Location;;
 
 
@@ -18,13 +17,13 @@ type mutable_flag =
 ;;
 
 (* location of an unqualified identifer, with optional prefix location *)
-type local_ident = (string*location)*(location option0);;
+type local_ident = (string*location)*(location option);;
 
 (* GImodname: qual_id, location of module, dot, optional prefix, ident *)
 type global_ident=
   GIname of local_ident
 | GImodname of qualified_ident * location * location
-                 * (location option0) * location
+                 * (location option) * location
 ;;
 
 let loc_of_gi = function
@@ -83,7 +82,7 @@ and expression_desc =
   | Zconstruct1 of global_ident * expression
   | Zapply of expression * expression list
   | Zlet of bool * (pattern * expression) list * expression
-  | Zfunction of location option0 * (pattern list * expression) list
+  | Zfunction of location option * (pattern list * expression) list
   | Ztrywith of expression * (pattern * expression) list
   | Zsequence of expression * expression
   | Zcondition of expression * expression * expression
@@ -147,7 +146,7 @@ type intf_phrase =
     in_loc: location }
 and intf_desc =
     Zvaluedecl of (location*
-         (local_ident * type_expression * location option0)) list
+         (local_ident * type_expression * location option)) list
   | Ztypedecl of ((string*location)
                     * (string*location) list * type_decl) list
   | Zexcdecl of (location * constr_decl) list

@@ -19,13 +19,6 @@ let default_used_interfaces =
 ;;
 
 
-
-type 'a option0=
-   None0
- | Some0 of 'a
-;;
-
-
 let inform s =
   if !verbose then (print_endline s; flush stdout)
 ;;

@@ -113,14 +113,14 @@ let enter_excdecl_intf decl loc=
 let enter_valuedecl decl loc =
   let conv_val (loc1,(((s,_),_) as lid ,expr,prim)) =
      enter_new_conv (VAR []) s;
-     if prim = None0 then emit_chg loc1 "val"
+     if prim = None then emit_chg loc1 "val"
       else emit_chg loc1 "external";
      chg_ident 0 (VAR []) (GIname lid);
      chg_typ_expr false [] expr;
      match prim with
-       Some0 l -> emit_chg l "";
+       Some l -> emit_chg l "";
                  todo ("copy primitive " ^ s)
-     | None0 -> ()  in
+     | None -> ()  in
   List.iter conv_val decl
 ;;
 

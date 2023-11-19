@@ -1,12 +1,11 @@
 (* Auxiliary functions for parsing *)
 
-open Globals;;
 open Location;;
 open Syntax;;
 open Modules;;
 
 
-let def_gi s= GIname ((s,(get_current_location())),None0);;
+let def_gi s= GIname ((s,(get_current_location())),None);;
 
 
 let make_expr_chg desc chg=
@@ -45,16 +44,16 @@ let make_apply chg_desc= function
 ;;
 
 let make_unop op e1 desc=
-  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None0)));
+  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None)));
               e_chg=NO_CHANGE; e_loc= (snd op) },[e1])
 and make_binop op e1 e2 desc=
-  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None0)));
+  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None)));
               e_chg=NO_CHANGE; e_loc= (snd op) }, [e1;e2])
 and make_ternop op e1 e2 e3 desc=
-  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None0)));
+  make_apply desc ({e_desc = Zident(ref (Zlocal (op,None)));
               e_chg=NO_CHANGE; e_loc= (snd op) },[e1;e2;e3])
 and make_infix op e1 e2 desc=
-  make_apply desc (e1, [{e_desc = Zident(ref (Zlocal (op,None0)));
+  make_apply desc (e1, [{e_desc = Zident(ref (Zlocal (op,None)));
               e_chg=NO_CHANGE; e_loc= (snd op) }; e2])
 ;;
 
