@@ -1,8 +1,8 @@
 (* The lexer definition *)
 
 {
-(**) #open "parser";;
-     #open "location";;
+(**) open Parser;;
+     open Location;;
 
 (* For nested comments *)
 
@@ -10,15 +10,15 @@ let comment_depth = ref 0;;
 
 (* The table of keywords *)
 
-let keyword_table = (hashtbl__new 149 : (string, token) hashtbl__t);;
+let keyword_table = (Hashtbl.new 149 : (string, token) Hashtbl.t);;
 let infix_list=ref ([]:string list);;
 
 
 let reset_infix()=
  infix_list := [ "not"; "quo"; "mod"; "land"; "lor"; "lxor";
                  "lsl"; "lsr"; "asr" ];
- hashtbl__clear keyword_table;
- do_list (fun (str,tok) -> hashtbl__add keyword_table str tok) [
+ Hashtbl.clear keyword_table;
+ do_list (fun (str,tok) -> Hashtbl.add keyword_table str tok) [
   "and", AND no_location;
   "as", AS;
   "begin", BEGIN;
@@ -64,12 +64,12 @@ let reset_infix()=
 
 let add_infix s =
   infix_list := s :: !infix_list;
-  hashtbl__add keyword_table s (INFIX2 (s,no_location))
+  Hashtbl.add keyword_table s (INFIX2 (s,no_location))
 ;;
 
 let remove_infix s =
   infix_list := except s !infix_list;
-  hashtbl__remove keyword_table s
+  Hashtbl.remove keyword_table s
 ;;
 
 let lex_loc lb= Loc ((get_lexeme_start lb),(get_lexeme_end lb));;
@@ -125,14 +125,14 @@ let get_stored_string () =
 
 let char_for_backslash = function
 #ifdef macintosh
-    `n` -> `\013`
-  | `r` -> `\010`
+    'n' -> '\013'
+  | 'r' -> '\010'
 #else
-    `n` -> `\010`
-  | `r` -> `\013`
+    'n' -> '\010'
+  | 'r' -> '\013'
 #endif
-  | `b` -> `\008`
-  | `t` -> `\009`
+  | 'b' -> '\008'
+  | 't' -> '\009'
   | c   -> c
 ;;
 
@@ -147,40 +147,40 @@ let char_for_decimal_code lexbuf i =
 }
 
 #ifdef unix
-#define ACCENTED `\192`-`\214` `\216`-`\246` `\248`-`\255`
+#define ACCENTED '\192'-'\214' '\216'-'\246' '\248'-'\255'
 #endif
 #ifdef macintosh
-#define ACCENTED `\128`-`\159` `\174`-`\175` `\190`-`\191` `\203`-`\207` `\216`-`\217` `\222`-`\223` `\229`-`\239` `\241`-`\244`
+#define ACCENTED '\128'-'\159' '\174'-'\175' '\190'-'\191' '\203'-'\207' '\216'-'\217' '\222'-'\223' '\229'-'\239' '\241'-'\244'
 #endif
 #ifdef msdos
-#define ACCENTED `\128`-`\154` `\160`-`\165`
+#define ACCENTED '\128'-'\154' '\160'-'\165'
 #endif
 
 #define SYMBOLS \
-    `!` `$` `%` `&` `*` `+` `-` `.` `/` `:` `<` `=` `>` `?` `@` `^` `|` `~`
+    '!' '$' '%' '&' '*' '+' '-' '.' '/' ':' '<' '=' '>' '?' '@' '^' '|' '~'
 
 #ifdef msdos
-#define End_of_file (eof | `\026`)
+#define End_of_file (eof | '\026')
 #else
 #define End_of_file eof
 #endif
 
 rule main = parse
-    [` ` `\010` `\013` `\009` `\012`] +
+    [' ' '\010' '\013' '\009' '\012'] +
       { main lexbuf }
-  | [`A`-`Z` `a`-`z` ACCENTED ]
-    ( `_` ? [`A`-`Z` `a`-`z` ACCENTED `'` (*'*) `0`-`9` ] ) *
+  | ['A'-'Z' 'a'-'z' ACCENTED ]
+    ( '_' ? ['A'-'Z' 'a'-'z' ACCENTED ''' (*'*) '0'-'9' ] ) *
       { let s = get_lexeme lexbuf in
           try
-            chg_kwd (lex_loc lexbuf) (hashtbl__find keyword_table s)
+            chg_kwd (lex_loc lexbuf) (Hashtbl.find keyword_table s)
           with Not_found ->
             IDENT (s,(lex_loc lexbuf)) }
-  | [`0`-`9`]+
-    | `0` [`x` `X`] [`0`-`9` `A`-`F` `a`-`f`]+
-    | `0` [`o` `O`] [`0`-`7`]+
-    | `0` [`b` `B`] [`0`-`1`]+
+  | ['0'-'9']+
+    | '0' ['x' 'X'] ['0'-'9' 'A'-'F' 'a'-'f']+
+    | '0' ['o' 'O'] ['0'-'7']+
+    | '0' ['b' 'B'] ['0'-'1']+
       { INT ((int_of_string(get_lexeme lexbuf)),(lex_loc lexbuf)) }
-  | [`0`-`9`]+ (`.` [`0`-`9`]*)? ([`e` `E`] [`+` `-`]? [`0`-`9`]+)?
+  | ['0'-'9']+ ('.' ['0'-'9']*)? (['e' 'E'] ['+' '-']? ['0'-'9']+)?
       { FLOAT (float_of_string(get_lexeme lexbuf)) }
   | "\""
       { reset_string_buffer();
@@ -245,15 +245,15 @@ rule main = parse
   | "-"     { SUBTRACTIVE ("-",(lex_loc lexbuf)) }
   | "-."    { SUBTRACTIVE ("-.",(lex_loc lexbuf)) }
 
-  | [ `!` `?` ] [ SYMBOLS ] *
+  | [ '!' '?' ] [ SYMBOLS ] *
             { PREFIX(get_lexeme lexbuf,(lex_loc lexbuf)) }
-  | [ `=` `<` `>` `@` `^` `|` `&` `~` `$` ] [ SYMBOLS ] *
+  | [ '=' '<' '>' '@' '^' '|' '&' '~' '$' ] [ SYMBOLS ] *
             { INFIX1(get_lexeme lexbuf,(lex_loc lexbuf)) }
-  | [ `+` `-` ] [ SYMBOLS ] *
+  | [ '+' '-' ] [ SYMBOLS ] *
             { INFIX2(get_lexeme lexbuf,(lex_loc lexbuf)) }
   | "**" [ SYMBOLS ] *
             { INFIX4(get_lexeme lexbuf,(lex_loc lexbuf)) }
-  | [ `*` `/` `%` ] [ SYMBOLS ] *
+  | [ '*' '/' '%' ] [ SYMBOLS ] *
             { INFIX3(get_lexeme lexbuf,(lex_loc lexbuf)) }
   | End_of_file { EOF }
   | _
@@ -277,11 +277,11 @@ and comment = parse
         comment lexbuf }
   | "``"
       { comment lexbuf }
-  | "`" [^ `\\` `\``] "`"
+  | "`" [^ '\\' '\''] "`"
       { comment lexbuf }
-  | "`" `\\` [`\\` `\`` `n` `t` `b` `r`] "`"
+  | "`" '\\' ['\\' '\'' 'n' 't' 'b' 'r'] "`"
       { comment lexbuf }
-  | "`" `\\` [`0`-`9`] [`0`-`9`] [`0`-`9`] "`"
+  | "`" '\\' ['0'-'9'] ['0'-'9'] ['0'-'9'] "`"
       { comment lexbuf }
   | End_of_file
       { raise(Lexical_error
@@ -290,26 +290,26 @@ and comment = parse
       { comment lexbuf }
 
 and char = parse
-    [^ `\\` `\``] "`"
+    [^ '\\' '\''] "`"
       { get_lexeme_char lexbuf 0 }
-  | `\\` [`\\` `\`` `n` `t` `b` `r`] "`"
+  | '\\' ['\\' '\'' 'n' 't' 'b' 'r'] "`"
       { char_for_backslash (get_lexeme_char lexbuf 1) }
-  | `\\` [`0`-`9`] [`0`-`9`] [`0`-`9`] "`"
+  | '\\' ['0'-'9'] ['0'-'9'] ['0'-'9'] "`"
       { char_for_decimal_code lexbuf 1 }
-  | [^ `\``] * ("`" | End_of_file)
+  | [^ '\''] * ("`" | End_of_file)
       { raise (Lexical_error(Bad_char_constant,
                             get_lexeme_start lexbuf - 1,
                             get_lexeme_end lexbuf)) }
 
 and string = parse
-    `"` (*"'"'*)
+    '"` (*"'"'*)
       { () }
   | `\\` ("\010" | "\013" | "\013\010") [` ` `\009`] *
       { string lexbuf }
-  | `\\` [`\\` `"` (*"'"'*) `n` `t` `b` `r`]
+  | `\\` [`\\` `"' (*"'"'*) 'n' 't' 'b' 'r']
       { store_string_char(char_for_backslash(get_lexeme_char lexbuf 1));
         string lexbuf }
-  | `\\` [`0`-`9`] [`0`-`9`] [`0`-`9`]
+  | '\\' ['0'-'9'] ['0'-'9'] ['0'-'9']
       { store_string_char(char_for_decimal_code lexbuf 1);
          string lexbuf }
   | End_of_file
