@@ -6,7 +6,7 @@
 (rule
  (deps builtins.mlca)
  (target std.zlc)
- (action (run caml2csl -o %{target} -c %{deps})))
+ (action (run %{bin:caml2csl} -o %{target} -c %{deps})))
 (rule
  (deps std.zlc
        arg.mlc baltree.mlc filename.mlc format.mlc gc.mlc genlex.mlc
@@ -17,7 +17,7 @@
           hashtbl.zc lexing.zc map.zc parsing.zc printexc.zc printf.zc
           queue.zc random.zc set.zc sort.zc sys.zc
           unix.zc graphics.zc)
- (action (run ./gen.sh %{deps})))
+ (action (run ./gen.sh %{bin:caml2csl} %{deps})))
 (install
  (section lib)
  (package caml2csl)

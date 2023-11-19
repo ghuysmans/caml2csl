@@ -1,11 +1,14 @@
 #!/bin/sh
+set -e
+tool="$1"
+shift
 clib="-clib $1"
 shift
 while : ; do
 	if [ -z "$1" ]; then
 		break
 	else
-		caml2csl $clib $1
+		$tool $clib $1
 		shift
 	fi
 done
