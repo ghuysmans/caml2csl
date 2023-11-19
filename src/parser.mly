@@ -4,7 +4,6 @@
 open Globals
 open Syntax
 open Location
-open Lexer
 open Par_aux
 %}
 
@@ -121,16 +120,16 @@ open Par_aux
 
 /* Entry points */
 
-%start Implementation
-%type <syntax__impl_phrase> Implementation 
-%start Interface
-%type <syntax__intf_phrase> Interface
+%start implementation
+%type <Syntax.impl_phrase> implementation
+%start interface
+%type <Syntax.intf_phrase> interface
 
 %%
 
 /* One phrase from a module implementation */
 
-Implementation :
+implementation :
         Expr SEMISEMI
           { make_impl(Zexpr $1) }
       | LET Binding_list SEMISEMI  %prec prec_let
@@ -149,7 +148,7 @@ Implementation :
 
 /* One phrase from a module interface */
 
-Interface :
+interface :
         VALUE Value_decl SEMISEMI
           { let (decl1,decls)=$2 in make_intf(Zvaluedecl (($1,decl1)::decls)) }
       | TYPE Type_decl SEMISEMI
@@ -170,7 +169,7 @@ Expr :
       | Simple_expr Simple_expr_list   %prec prec_app
           { make_apply NO_CHANGE ($1, $2) }
       | Expr_comma_list
-          { make_expr(Ztuple(rev $1)) }
+          { make_expr(Ztuple(List.rev $1)) }
       | SUBTRACTIVE Expr  %prec prec_uminus
           { make_unop $1 $2 NO_CHANGE}
       | NOT Expr
@@ -296,11 +295,11 @@ Simple_expr :
       | LBRACKET RBRACKET
           { make_expr (Zconstruct0 (def_gi "[]")) }
       | LBRACKETBAR Expr_sm_list Opt_semi BARRBRACKET
-          { make_expr_chg (Zvector(rev $2)) (SEQ [ NO_CHANGE; $3 ]) }
+          { make_expr_chg (Zvector(List.rev $2)) (SEQ [ NO_CHANGE; $3 ]) }
       | LBRACKETBAR BARRBRACKET
           { make_expr(Zvector []) }
       | LBRACKETLESS Stream_expr Opt_semi GREATERRBRACKET
-          { make_expr_chg (Zstream (rev $2)) $3 }
+          { make_expr_chg (Zstream (List.rev $2)) $3 }
       | LBRACKETLESS GREATERRBRACKET
           { make_expr(Zstream []) }
       | LPAREN Expr COLON Type RPAREN
@@ -474,7 +473,7 @@ Pattern :
           { make_pat(Zconstruct1pat((GIname (("::",$2),None)),
               make_pat(Ztuplepat [$1; $3]))) }
       | Pattern_comma_list
-          { make_pat(Ztuplepat(rev $1)) }
+          { make_pat(Ztuplepat(List.rev $1)) }
       | Ext_ident Simple_pattern
           { let x1=$1 and x2=$2 in
               make_pat_chg (Zconstruct1pat ( x1, x2))
@@ -604,7 +603,7 @@ Type :
         Simple_type
           { $1 }
       | Type_star_list
-          { make_typ(Ztypetuple(rev $1)) }
+          { make_typ(Ztypetuple(List.rev $1)) }
       | Type MINUSGREATER Type
           { make_typ(Ztypearrow($1, $3)) }
 ;
