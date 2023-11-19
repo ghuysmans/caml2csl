@@ -51,7 +51,7 @@ exception Cannot_find_file of string;;
 let find_in_path filename =
   if file_exists filename then
     filename
-  else if Filename.is_absolute filename then
+  else if not (Filename.is_relative filename) then
     raise(Cannot_find_file filename)
   else
     let rec find = function
