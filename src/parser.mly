@@ -1,11 +1,9 @@
 /* The parser definition */
 
 %{
-open Globals
 open Syntax
 open Location
 open Par_aux
-open Infix
 %}
 
 /* Tokens */
