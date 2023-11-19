@@ -1,0 +1,12 @@
+(rule
+ (deps lexer.mlp)
+ (action
+  (with-stdout-to lexer.mll
+   (run %{bin:cpp} -P -Dunix -traditional-cpp %{deps}))))
+(ocamllex (modules lexer))
+(ocamlyacc (modules parser))
+(executables
+ (names main renamer)
+ (libraries csl)
+ (flags (:standard -w -3-9-10-27-39 -unsafe-string -no-strict-sequence))
+ (preprocess (action (run %{bin:camlp4o} %{input-file}))))
