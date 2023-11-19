@@ -104,7 +104,7 @@ let compile_stdfile filename =
         parse_file (lexer (Caml__csl.stream_of_channel ch));
         close_in ch
       with
-        (Stream.Parse_error "") -> failwith ("Syntax error in '" ^ filename ^ "'")
+        (Stream.Error "") -> failwith ("Syntax error in '" ^ filename ^ "'")
   with Cannot_find_file _ -> failwith ("Cannot find library source '"
                                                       ^ filename ^ "'")
 ;;
