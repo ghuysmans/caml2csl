@@ -3,7 +3,6 @@ open Globals;;
 open Location;;
 open Syntax;;
 open Modules;;
-open Lexer;;
 open Emit;;
 open Conv;;
 
@@ -47,7 +46,7 @@ let warn_special prfx loc = function
   {qual="Caml__csl"; id="combine"}
          -> warn ("list__combine in " ^ (string_of_loc loc))
 (*| {qual="Pervasives"; id="not"}
-         -> if mem "not" !infix_list then begin
+         -> if List.mem "not" !Infix.list then begin
               remove_prefix prfx;
               raise Done
             end*)
@@ -82,7 +81,7 @@ let check_var_arity arity loc = fun
 
 (* en fait, csl_infix *)
 let real_pref s prfx =
-  if List.mem s !infix_list then (remove_prefix prfx; None0) else prfx
+  if List.mem s !Infix.list then (remove_prefix prfx; None0) else prfx
 ;;
 
 let try_local_var arity = fun

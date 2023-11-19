@@ -14,4 +14,3 @@ val main: Lexing.lexbuf -> token
 ;;
 
 val reset_infix: unit -> unit;;
-val infix_list: string list ref;;

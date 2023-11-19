@@ -19,11 +19,9 @@ let comment_depth = ref 0;;
 (* The table of keywords *)
 
 let keyword_table = (Hashtbl.create 149 : (string, token) Hashtbl.t);;
-let infix_list=ref ([]:string list);;
-
 
 let reset_infix()=
- infix_list := [ "not"; "quo"; "mod"; "land"; "lor"; "lxor";
+ Infix.list := [ "not"; "quo"; "mod"; "land"; "lor"; "lxor";
                  "lsl"; "lsr"; "asr" ];
  Hashtbl.clear keyword_table;
  List.iter (fun (str,tok) -> Hashtbl.add keyword_table str tok) [
@@ -71,12 +69,12 @@ let reset_infix()=
 
 
 let add_infix s =
-  infix_list := s :: !infix_list;
+  Infix.list := s :: !Infix.list;
   Hashtbl.add keyword_table s (INFIX2 (s,no_location))
 ;;
 
 let remove_infix s =
-  infix_list := Caml__csl.except s !infix_list;
+  Infix.list := Caml__csl.except s !Infix.list;
   Hashtbl.remove keyword_table s
 ;;
 

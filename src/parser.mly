@@ -5,6 +5,7 @@ open Globals
 open Syntax
 open Location
 open Par_aux
+open Infix
 %}
 
 /* Tokens */
@@ -189,7 +190,7 @@ Expr :
           { let ((i,(Loc (d2,f2))) as iloc)=$2 and e1=$1 and e3=$3 in
             let (Loc (d1,_))=e1.e_loc 
             and (Loc (d3,f3))=e3.e_loc in
-            if List.mem i !infix_list then
+            if List.mem i !Infix.list then
               make_binop iloc e1 e3
  (SWAP (e1.e_loc,(Loc (d2,f2)),[
    REPLACE ((Loc (d1,d1)),"(");
