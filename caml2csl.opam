@@ -1,5 +1,5 @@
 opam-version: "2.0"
-name: "csl"
+name: "caml2csl"
 version: "dev"
 maintainer: "Guillaume Huysmans <ghuysmans99@gmail.com>"
 authors: "Bruno Barras <barras@pauillac.inria.fr>"
@@ -10,4 +10,4 @@ build: [["dune" "build" "-p" name "-j" jobs]]
 depends: [
   "dune"
 ]
-synopsis: "Caml Light to Caml Special Light translator support library"
+synopsis: "Caml Light to Caml Special Light (almost OCaml) translator"

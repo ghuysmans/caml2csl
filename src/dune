@@ -7,6 +7,8 @@
 (ocamlyacc (modules parser))
 (executables
  (names main renamer)
+ (public_names caml2csl rename_caml)
+ (package caml2csl)
  (libraries csl)
  (flags (:standard -w -3-9-10-27-39 -unsafe-string -no-strict-sequence))
  (preprocess (action (run %{bin:camlp4o} %{input-file}))))

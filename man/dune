@@ -1,0 +1,1 @@
+(install (section man) (package caml2csl) (files caml2csl.1))

@@ -20,6 +20,7 @@
  (action (run ./gen.sh %{deps})))
 (install
  (section lib)
+ (package caml2csl)
  (files std.zlc
         arg.zc baltree.zc filename.zc format.zc gc.zc genlex.zc
         hashtbl.zc lexing.zc map.zc parsing.zc printexc.zc printf.zc
