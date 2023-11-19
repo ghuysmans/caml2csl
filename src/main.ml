@@ -43,4 +43,4 @@ with Failure s -> prerr_endline ("Fatal error: " ^ s ^ "."); exit 2
    | e -> prerr_endline "Unexpected exception. Please report."; raise e
 ;;
 
-Printexc.catch main (); exit 0;;
+Printexc.catch main ()
