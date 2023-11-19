@@ -9,8 +9,8 @@ let arg_parse opt_list anonymous_fun =
 
 (* io *)
 
-external open_descriptor_out : int -> out_channel = "open_descriptor"
-external open_descriptor_in : int -> in_channel = "open_descriptor"
+external open_descriptor_out : int -> out_channel = "caml_ml_open_descriptor_out"
+external open_descriptor_in : int -> in_channel = "caml_ml_open_descriptor_in"
 
 
 
