@@ -98,8 +98,9 @@ let exec_check trm typ= if (check_typ !ENV trm typ)
 
 let exec_quit()=print_endline "\nAu revoir..."; exit 0;;
 
-let exec_delete()= try print_endline ((hd !CTX)^" supprime."); ENV:=(tl !ENV) ; CTX:=(tl !CTX) 
-                   with (Failure "hd") -> print_endline "environement deja vide."
+let exec_delete()= match !CTX with
+                   | h :: t -> print_endline (h^" supprime."); ENV:=(tl !ENV) ; CTX:=t
+                   | [] -> print_endline "environement deja vide."
 ;;
 
 let exec_list()=
