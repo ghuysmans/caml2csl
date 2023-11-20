@@ -65,7 +65,7 @@ generated previously (example: you define a variable `X` that was translated to
 `x`, and then you open a module defining a variable `x`). The old value was still
 reachable with Caml-Light because you could still use name qualification (i.e.
 `mod__x`), but in OCaml, you cannot refer to the module being compiled and the
-old value would be definitively lost (see [test/toto.caml](test/toto.caml) for an example).
+old value would be definitively lost (see [test/toto/toto.caml](test/toto/toto.caml) for an example).
 
   The syntax of such files is described below.
 
