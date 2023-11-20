@@ -1,0 +1,13 @@
+(rule
+ (deps (package csl) inf_opt.caml)
+ (targets inf_opt.ml inf_opt.zc)
+ (action (run %{bin:caml2csl} -clib ../../lib/std.zlc -I ../../lib inf_opt.caml)))
+(rule
+ (deps (package csl) gram.caml inf_opt.zc)
+ (target gram.ml)
+ (action (run %{bin:caml2csl} -o %{target} -clib ../../lib/std.zlc -I ../../lib -I . gram.caml)))
+(test
+ (name gram)
+ (libraries csl)
+ (flags (:standard -w -3-27-39))
+ (preprocess (action (run %{bin:camlp4o} %{input-file}))))
