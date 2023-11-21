@@ -105,7 +105,7 @@ let rec from f=
 let stream_of_string s =
   let cnt = ref (-1) in
   from (fun () -> incr cnt;
-                  if !cnt > String.length s 
+                  if !cnt >= String.length s
                   then raise Stream.Failure
                   else s.[ !cnt ])
 ;;
