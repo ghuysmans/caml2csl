@@ -117,6 +117,12 @@ let stream_of_channel ch =
 
 let check p= parser [< 'x when p x >] -> x;;
 
+let within ranges alt =
+  check (fun x ->
+    String.contains alt x ||
+    List.exists (fun (a, b) -> x >= a && x <= b) ranges
+  )
+;;
 
 
 

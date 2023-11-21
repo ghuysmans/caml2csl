@@ -37,6 +37,7 @@ val from : (unit -> 'a) -> 'a Stream.t
 val check : ('a -> bool) -> 'a Stream.t -> 'a
 val stream_of_string : string -> char Stream.t
 val stream_of_channel: in_channel -> char Stream.t
+val within : (char * char) list -> string -> char Stream.t -> char
 
 (* string *)
 
