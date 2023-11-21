@@ -2,4 +2,64 @@
 (* Graphic library *)
 
 MODULE graphics OPEN Graphics {
+TYPE{
+color  =
+image  =
+status =
+event  =
+}
+
+VALUE{
+open_graph      =
+close_graph     =
+clear_graph     =
+size_x          =
+size_y          =
+rgb             =
+set_color       =
+black           =
+white           =
+red             =
+green           =
+blue            =
+yellow          =
+cyan            =
+magenta         =
+background      =
+foreground      =
+plot            =
+point_color     =
+moveto          =
+current_point   =
+lineto          =
+draw_arc        =
+draw_ellipse    =
+draw_circle     =
+set_line_width  =
+draw_char       =
+draw_string     =
+set_font        =
+set_text_size   =
+text_size       =
+fill_rect       =
+fill_poly       =
+fill_arc        =
+fill_ellipse    =
+fill_circle     =
+transp          =
+make_image      =
+dump_image      =
+get_image       =
+create_image    =
+blit_image      =
+wait_next_event =
+mouse_pos       =
+button_down     =
+read_key        =
+key_pressed     =
+sound           =
+}
+CONSTR{
+Graphic_failure = 1
+}
 }
