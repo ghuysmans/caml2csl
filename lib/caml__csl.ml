@@ -96,10 +96,7 @@ let do_list_combine f =
 
 (* stream *)
 
-let rec from f=
-  try [< 'f() ; (from f) >]
-  with Stream.Failure -> [< >]
-;;
+let from f = Stream.from (fun _ -> try Some (f ()) with Stream.Failure -> None);;
 
 (* Stream.of_string and Stream.of_channel are not equivalent to those funs *)
 let stream_of_string s =
