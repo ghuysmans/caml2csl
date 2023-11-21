@@ -9,6 +9,7 @@ dev-repo: "git+https://github.com/ghuysmans/caml2csl/"
 build: [["dune" "build" "-p" name "-j" jobs]]
 depends: [
   "dune"
-	"csl"
+  "csl"
+  "camlp4"
 ]
 synopsis: "Caml Light to Caml Special Light (almost OCaml) translator"
