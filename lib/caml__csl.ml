@@ -112,7 +112,11 @@ let stream_of_channel ch =
                   with End_of_file -> raise Stream.Failure)
 ;;
 
-let check p= parser [< 'x when p x >] -> x;;
+let check p s =
+  match Stream.peek s with
+  | Some x when p x -> Stream.junk s; x
+  | _ -> raise Stream.Failure
+;;
 
 let within ranges alt =
   check (fun x ->

@@ -1,8 +1,7 @@
 (library
  (public_name csl)
  (wrapped false)
- (flags (:standard -w -3-9-27-39 -unsafe-string -no-strict-sequence))
- (preprocess (action (run %{bin:camlp4o} %{input-file}))))
+ (flags (:standard -w -3-9-27-39 -unsafe-string -no-strict-sequence)))
 (rule
  (deps builtins.mlca)
  (target std.zlc)
