@@ -114,7 +114,7 @@ There are 3 categories of features:
   the implementation file.
 - applying a non-explicit tuple to a constructor of arity greater than 1 in
   an expression
-- changes in the semantics of streams. See the example in [test/toto/toto.ml](test/toto/toto.ml)
+- changes in the semantics of streams. See the example in [test/toto/toto.caml](test/toto/toto.caml)
    Moreover, `stream_get` cannot be easily translated in OCaml. Programs using
    `stream_get` are translated into bad typed programs.
 - assignments of mutable fields of an arbitrary expression forbidden in OCaml
