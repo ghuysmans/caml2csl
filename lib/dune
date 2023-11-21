@@ -11,11 +11,11 @@
  (deps std.zlc
        arg.mlc baltree.mlc filename.mlc format.mlc gc.mlc genlex.mlc
        hashtbl.mlc lexing.mlc map.mlc parsing.mlc printexc.mlc printf.mlc
-       queue.mlc random.mlc set.mlc sort.mlc sys.mlc
+       queue.mlc random.mlc set.mlc sort.mlc stack.mlc sys.mlc
        unix.mlc graphics.mlc)
  (targets arg.zc baltree.zc filename.zc format.zc gc.zc genlex.zc
           hashtbl.zc lexing.zc map.zc parsing.zc printexc.zc printf.zc
-          queue.zc random.zc set.zc sort.zc sys.zc
+          queue.zc random.zc set.zc sort.zc stack.zc sys.zc
           unix.zc graphics.zc)
  (action (run ./gen.sh %{bin:caml2csl} %{deps})))
 (install
@@ -24,5 +24,5 @@
  (files std.zlc
         arg.zc baltree.zc filename.zc format.zc gc.zc genlex.zc
         hashtbl.zc lexing.zc map.zc parsing.zc printexc.zc printf.zc
-        queue.zc random.zc set.zc sort.zc sys.zc
+        queue.zc random.zc set.zc sort.zc stack.zc sys.zc
         unix.zc graphics.zc))

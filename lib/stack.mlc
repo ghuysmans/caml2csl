@@ -15,6 +15,6 @@ length  =
 iter    =
 }
 CONSTR{
-Empty   =
+Empty   =       0
 }
 }
